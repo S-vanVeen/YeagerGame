@@ -1,1 +1,0 @@
-mark is een neger
