@@ -4,7 +4,5 @@ module OutbreakSurvival {
     exports org.example;
 
     opens images;
-    opens sprites;
     opens audio;
-    opens tiles;
 }
