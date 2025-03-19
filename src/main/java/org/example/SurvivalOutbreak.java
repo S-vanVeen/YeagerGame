@@ -12,12 +12,12 @@ public class SurvivalOutbreak extends YaegerGame
     @Override
     public void setupGame() {
         setGameTitle("Survival Outbreak");
-        setSize(new Size(1920, 1080));
+        setSize(new Size(1200, 600));
     }
 
     @Override
     public void setupScenes() {
         addScene(0, new TitleScene(this));
-        addScene(1, new GameScene());
+        addScene(1, new GameScene(this));
     }
 }

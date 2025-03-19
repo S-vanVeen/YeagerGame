@@ -6,4 +6,5 @@ module OutbreakSurvival {
 
     opens images;
     opens audio;
+    opens sprites;
 }
