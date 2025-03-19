@@ -34,8 +34,10 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
             setCurrentFrameIndex(1);
         } else if(pressedKeys.contains(KeyCode.W)){
             setMotion(1,180d);
-        } else if(pressedKeys.contains(KeyCode.S)){
-            setMotion(1,0d);
+        } else if(pressedKeys.contains(KeyCode.S)) {
+            setMotion(1, 0d);
+        } else if(pressedKeys.contains(KeyCode.ESCAPE)){
+            survivalOutbreak.setActiveScene(2);
         } else if (pressedKeys.isEmpty()) {
             setSpeed(0);
         }

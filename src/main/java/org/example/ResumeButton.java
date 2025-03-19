@@ -11,11 +11,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-public class StartKnop extends TextEntity implements MouseButtonPressedListener, MouseEnterListener, MouseExitListener {
+public class ResumeButton extends TextEntity implements MouseButtonPressedListener, MouseEnterListener, MouseExitListener {
+
     private final SurvivalOutbreak survivalOutbreak;
 
-    public StartKnop(SurvivalOutbreak survivalOutbreak, Coordinate2D initialLocation) {
-        super(initialLocation,"Start game");
+    public ResumeButton(SurvivalOutbreak survivalOutbreak, Coordinate2D initialLocation) {
+        super(initialLocation,"Resume game");
         this.survivalOutbreak = survivalOutbreak;
         setFill(Color.WHITE);
         setFont(Font.font("Rockwell Extra Bold", FontWeight.SEMI_BOLD, 30));
@@ -27,13 +28,13 @@ public class StartKnop extends TextEntity implements MouseButtonPressedListener,
     }
 
     @Override
-    public void onMouseEntered(){
-        setFill(Color.RED);
+    public void onMouseEntered() {
+        setFill(Color.LIGHTGREY);
         setCursor(Cursor.HAND);
     }
 
     @Override
-    public void onMouseExited(){
+    public void onMouseExited() {
         setFill(Color.WHITE);
         setCursor(Cursor.DEFAULT);
     }
