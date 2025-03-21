@@ -20,5 +20,6 @@ public class SurvivalOutbreak extends YaegerGame
         addScene(0, new TitleScene(this));
         addScene(1, new GameScene(this));
         addScene(2, new PauseScene(this));
+        addScene(3, new EndScene(this));
     }
 }

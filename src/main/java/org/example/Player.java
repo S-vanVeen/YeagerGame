@@ -4,24 +4,28 @@ import com.github.hanyaeger.api.Coordinate2D;
 import com.github.hanyaeger.api.Size;
 import com.github.hanyaeger.api.entities.Collided;
 import com.github.hanyaeger.api.entities.Collider;
-import com.github.hanyaeger.api.entities.Newtonian;
 import com.github.hanyaeger.api.entities.SceneBorderTouchingWatcher;
 import com.github.hanyaeger.api.entities.impl.DynamicSpriteEntity;
 import com.github.hanyaeger.api.scenes.SceneBorder;
 import com.github.hanyaeger.api.userinput.KeyListener;
 import javafx.scene.input.KeyCode;
+import org.example.entities.Text.HealthText;
 
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 public class Player extends DynamicSpriteEntity implements KeyListener, SceneBorderTouchingWatcher, Collided {
 
     private SurvivalOutbreak survivalOutbreak;
+    private HealthText healthText;
+    private int health = 100;
 
-    public Player(Coordinate2D location, SurvivalOutbreak survivalOutbreak) {
+    public Player(Coordinate2D location, HealthText healthText, SurvivalOutbreak survivalOutbreak) {
         super("sprites/Player_idle_front.png", location, new Size(25,25), 1, 1);
-
         this.survivalOutbreak = survivalOutbreak;
+        this.healthText = healthText;
+        healthText.setHealthText(health);
 
     }
 
@@ -66,7 +70,17 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     }
 
     @Override
-    public void onCollision(List<Collider> list) {
-        System.out.println("Collided!");
+    public void onCollision(List<Collider> collidingObject){
+        setAnchorLocation(new Coordinate2D(
+                new Random().nextInt((int)(getSceneWidth()-getWidth())),
+                new Random().nextInt((int)(getSceneHeight()-getHeight())))
+        );
+
+        health -= 10;
+        healthText.setHealthText(health);
+
+        if(health <= 0){
+            survivalOutbreak.setActiveScene(3);
+        }
     }
 }
