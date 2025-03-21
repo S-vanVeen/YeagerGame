@@ -7,4 +7,5 @@ module OutbreakSurvival {
     opens images;
     opens audio;
     opens sprites;
+    exports org.example.entities.normalZombie;
 }
