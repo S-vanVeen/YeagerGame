@@ -1,4 +1,4 @@
-package org.example;
+package org.example.scenes;
 
 import com.github.hanyaeger.api.AnchorPoint;
 import com.github.hanyaeger.api.Coordinate2D;
@@ -7,6 +7,8 @@ import com.github.hanyaeger.api.scenes.StaticScene;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.example.buttons.StartButton;
+import org.example.SurvivalOutbreak;
 
 public class TitleScene extends StaticScene {
     private final SurvivalOutbreak survivalOutbreak;
@@ -24,7 +26,6 @@ public class TitleScene extends StaticScene {
 
     @Override
     public void setupEntities() {
-
 
         var titleSceneText = new TextEntity(
                 new Coordinate2D(getWidth() / 2, getHeight() / 4),

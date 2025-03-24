@@ -1,4 +1,4 @@
-package org.example.entities.normalZombie;
+package org.example.zombies.normalZombie;
 
 import com.github.hanyaeger.api.Coordinate2D;
 import com.github.hanyaeger.api.entities.Collider;

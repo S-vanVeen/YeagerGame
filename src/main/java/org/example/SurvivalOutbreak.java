@@ -2,6 +2,10 @@ package org.example;
 
 import com.github.hanyaeger.api.Size;
 import com.github.hanyaeger.api.YaegerGame;
+import org.example.scenes.EndScene;
+import org.example.scenes.GameScene;
+import org.example.scenes.PauseScene;
+import org.example.scenes.TitleScene;
 
 public class SurvivalOutbreak extends YaegerGame
 {

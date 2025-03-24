@@ -9,7 +9,7 @@ import com.github.hanyaeger.api.entities.impl.DynamicSpriteEntity;
 import com.github.hanyaeger.api.scenes.SceneBorder;
 import com.github.hanyaeger.api.userinput.KeyListener;
 import javafx.scene.input.KeyCode;
-import org.example.entities.Text.HealthText;
+import org.example.ui.HealthText;
 
 import java.util.List;
 import java.util.Random;

@@ -1,9 +1,11 @@
-package org.example;
+package org.example.scenes;
 
 import com.github.hanyaeger.api.Coordinate2D;
 import com.github.hanyaeger.api.scenes.DynamicScene;
-import org.example.entities.Text.HealthText;
-import org.example.entities.normalZombie.Zombie;
+import org.example.Player;
+import org.example.SurvivalOutbreak;
+import org.example.ui.HealthText;
+import org.example.zombies.normalZombie.Zombie;
 
 public class GameScene extends DynamicScene {
     private final SurvivalOutbreak survivalOutbreak;
