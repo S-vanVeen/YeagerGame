@@ -10,6 +10,7 @@ import com.github.hanyaeger.api.scenes.SceneBorder;
 import com.github.hanyaeger.api.userinput.KeyListener;
 import javafx.scene.input.KeyCode;
 import org.example.ui.HealthText;
+import org.example.ui.RoundText;
 
 import java.util.List;
 import java.util.Random;
@@ -20,11 +21,16 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     private SurvivalOutbreak survivalOutbreak;
     private HealthText healthText;
     private int health = 100;
+    private RoundText roundText;
+    private int round = 1;
+    private int zombies = 1;
 
-    public Player(Coordinate2D location, HealthText healthText, SurvivalOutbreak survivalOutbreak) {
+    public Player(Coordinate2D location, RoundText roundText,HealthText healthText, SurvivalOutbreak survivalOutbreak) {
         super("sprites/Player_idle_front.png", location, new Size(25,25), 1, 1);
         this.survivalOutbreak = survivalOutbreak;
         this.healthText = healthText;
+        this.roundText = roundText;
+        roundText.setRoundText(round);
         healthText.setHealthText(health);
 
     }
@@ -32,15 +38,15 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     @Override
     public void onPressedKeysChange(Set<KeyCode> pressedKeys){
         if(pressedKeys.contains(KeyCode.A)){
-            setMotion(1,270d);
+            setMotion(2,270d);
             setCurrentFrameIndex(0);
         } else if(pressedKeys.contains(KeyCode.D)){
-            setMotion(1,90d);
+            setMotion(2,90d);
             setCurrentFrameIndex(1);
         } else if(pressedKeys.contains(KeyCode.W)){
-            setMotion(1,180d);
+            setMotion(2,180d);
         } else if(pressedKeys.contains(KeyCode.S)) {
-            setMotion(1, 0d);
+            setMotion(2, 0d);
         } else if(pressedKeys.contains(KeyCode.ESCAPE)){
             survivalOutbreak.setActiveScene(2);
         } else if (pressedKeys.isEmpty()) {
@@ -81,6 +87,12 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
 
         if(health <= 0){
             survivalOutbreak.setActiveScene(3);
+        }
+    }
+
+    public void zombiesDood() {
+        if(zombies == 0) {
+            round ++;
         }
     }
 }
