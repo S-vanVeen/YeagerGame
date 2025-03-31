@@ -6,7 +6,7 @@ import com.github.hanyaeger.api.TimerContainer;
 import com.github.hanyaeger.api.Timer;
 import org.example.Player;
 import org.example.SurvivalOutbreak;
-import org.example.ui.HealthText;
+import org.example.ui.HealthBar;
 import org.example.ui.RoundText;
 import org.example.zombies.normalZombie.Zombie;
 
@@ -26,14 +26,16 @@ public class GameScene extends DynamicScene implements TimerContainer {
 
     @Override
     public void setupEntities() {
-        HealthText healthText = new HealthText(new Coordinate2D(50, getHeight() - 50));
-        addEntity(healthText);
+        HealthBar healthBar = new HealthBar(new Coordinate2D(50, getHeight() - 50), 100, 100, 10);
+        addEntity(healthBar);
+        addEntity(healthBar.getHealthText());
+
 
         RoundText roundText = new RoundText(new Coordinate2D(50, 50));
         addEntity(roundText);
 
         // Create player and add to scene
-        player = new Player(new Coordinate2D(getWidth() / 2, getHeight() / 2), healthText, roundText,survivalOutbreak);
+        player = new Player(new Coordinate2D(getWidth() / 2, getHeight() / 2), healthBar, roundText,survivalOutbreak);
         addEntity(player);
 
         // Create zombie with player location
