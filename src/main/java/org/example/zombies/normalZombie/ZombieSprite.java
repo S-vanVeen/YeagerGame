@@ -8,5 +8,6 @@ public class ZombieSprite extends DynamicSpriteEntity {
     public ZombieSprite(final Coordinate2D location) {
         super("sprites/normal_zombie.png", location, new Size(25, 25), 1, 1);
 //        setAutoCycle(25);
+        
     }
 }

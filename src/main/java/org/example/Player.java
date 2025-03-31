@@ -26,7 +26,7 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     private static final boolean ENABLE_LOCATION_LOGGING = true; // Toggle to enable/disable logging
 
     public Player(Coordinate2D location, HealthBar healthBar, RoundText roundText, SurvivalOutbreak survivalOutbreak) {
-        super("sprites/Player_idle_front.png", location, new Size(25,25), 1, 1);
+        super("sprites/sprite_sheet.png", location, new Size(25,25), 4, 3);
         this.survivalOutbreak = survivalOutbreak;
         this.healthBar = healthBar;
         this.roundText = roundText;
@@ -53,39 +53,42 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     }
 
     @Override
-    public void onPressedKeysChange(Set<KeyCode> pressedKeys){
+    public void onPressedKeysChange(Set<KeyCode> pressedKeys) {
         boolean moved = false;
 
-        if(pressedKeys.contains(KeyCode.A)){
-            setMotion(2,270d);
-            setCurrentFrameIndex(0);
+        if (pressedKeys.contains(KeyCode.W)) {
+            setMotion(1.5, 180d);
+            setAutoCycle(125, 0);
             moved = true;
-        } else if(pressedKeys.contains(KeyCode.D)){
-            setMotion(2,90d);
-            setCurrentFrameIndex(1);
+        } else if (pressedKeys.contains(KeyCode.S)) {
+            setMotion(1.5, 0d);
+            setAutoCycle(125, 1);
             moved = true;
-        } else if(pressedKeys.contains(KeyCode.W)){
-            setMotion(2,180d);
+        } else if (pressedKeys.contains(KeyCode.A)) {
+            setMotion(1.5, 270d);
+            setAutoCycle(125, 2);
             moved = true;
-        } else if(pressedKeys.contains(KeyCode.S)) {
-            setMotion(2, 0d);
+        } else if (pressedKeys.contains(KeyCode.D)) {
+            setMotion(1.5, 90d);
+            setAutoCycle(125, 3);
             moved = true;
-        } else if(pressedKeys.contains(KeyCode.ESCAPE)){
+        } else if (pressedKeys.contains(KeyCode.ESCAPE)) {
             survivalOutbreak.setActiveScene(2);
         } else if (pressedKeys.isEmpty()) {
             setSpeed(0);
+            setAutoCycle(0);
+            setCurrentFrameIndex(3);
         }
 
-        // Log when player starts moving
         if (moved && ENABLE_LOCATION_LOGGING) {
             logLocation("key press");
         }
 
-        // Debug key for manually printing location (press L)
         if (pressedKeys.contains(KeyCode.L) && ENABLE_LOCATION_LOGGING) {
             logLocation("manual check");
         }
     }
+
 
     @Override
     public void notifyBoundaryTouching(SceneBorder border){
