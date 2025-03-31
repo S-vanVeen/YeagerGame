@@ -10,6 +10,7 @@ import com.github.hanyaeger.api.scenes.SceneBorder;
 import com.github.hanyaeger.api.userinput.KeyListener;
 import javafx.scene.input.KeyCode;
 import org.example.ui.HealthText;
+import org.example.ui.RoundText;
 
 import java.util.List;
 import java.util.Random;
@@ -19,14 +20,18 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
 
     private SurvivalOutbreak survivalOutbreak;
     private HealthText healthText;
+    private RoundText roundText;
     private int health = 100;
+    private int round = 1;
     private static final boolean ENABLE_LOCATION_LOGGING = true; // Toggle to enable/disable logging
 
-    public Player(Coordinate2D location, HealthText healthText, SurvivalOutbreak survivalOutbreak) {
+    public Player(Coordinate2D location, HealthText healthText, RoundText roundText, SurvivalOutbreak survivalOutbreak) {
         super("sprites/Player_idle_front.png", location, new Size(25,25), 1, 1);
         this.survivalOutbreak = survivalOutbreak;
         this.healthText = healthText;
+        this.roundText = roundText;
         healthText.setHealthText(health);
+        roundText.setRoundText(round);
 
         // Log initial location
         if (ENABLE_LOCATION_LOGGING) {
