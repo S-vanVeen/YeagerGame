@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class Player extends DynamicSpriteEntity implements KeyListener, SceneBorderTouchingWatcher, Collided, PlayerLocation, MouseButtonPressedListener {
+public class Player extends DynamicSpriteEntity implements KeyListener, SceneBorderTouchingWatcher, Collided, PlayerLocation {
 
     private SurvivalOutbreak survivalOutbreak;
     private HealthBar healthBar;
@@ -29,7 +29,7 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     private static final boolean ENABLE_LOCATION_LOGGING = false; // Toggle to enable/disable logging
 
     public Player(Coordinate2D location, HealthBar healthBar, RoundText roundText, SurvivalOutbreak survivalOutbreak) {
-        super("sprites/sprite_sheet.png", location, new Size(25,25), 4, 3);
+        super("sprites/sprite_sheet.png", location, new Size(25, 25), 4, 3);
         this.survivalOutbreak = survivalOutbreak;
         this.healthBar = healthBar;
         this.roundText = roundText;
@@ -94,10 +94,10 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
 
 
     @Override
-    public void notifyBoundaryTouching(SceneBorder border){
+    public void notifyBoundaryTouching(SceneBorder border) {
         setSpeed(0);
 
-        switch(border){
+        switch (border) {
             case TOP:
                 setAnchorLocationY(1);
                 break;
@@ -120,10 +120,10 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     }
 
     @Override
-    public void onCollision(List<Collider> collidingObject){
+    public void onCollision(List<Collider> collidingObject) {
         Coordinate2D newLocation = new Coordinate2D(
-                new Random().nextInt((int)(getSceneWidth()-getWidth())),
-                new Random().nextInt((int)(getSceneHeight()-getHeight()))
+                new Random().nextInt((int) (getSceneWidth() - getWidth())),
+                new Random().nextInt((int) (getSceneHeight() - getHeight()))
         );
 
         setAnchorLocation(newLocation);
@@ -131,7 +131,7 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
         health -= 10;
         healthBar.updateHealth(health);
 
-        if(health <= 0){
+        if (health <= 0) {
             survivalOutbreak.setActiveScene(3);
         }
 
@@ -148,12 +148,4 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
                 String.format("%.2f", location.getX()) + ", Y=" +
                 String.format("%.2f", location.getY()));
     }
-
-    @Override
-    public void onMouseButtonPressed(MouseButton mouseButton, Coordinate2D coordinate2D) {
-            double mouseX = 0;
-            double mouseY = 0;
-
-            System.out.println("Mouse click at: X=" + String.format("%.2f", mouseX) + ", Y=" + String.format("%.2f", mouseY));
-        }
-    }
+}
