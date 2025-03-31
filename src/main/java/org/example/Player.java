@@ -8,22 +8,25 @@ import com.github.hanyaeger.api.entities.SceneBorderTouchingWatcher;
 import com.github.hanyaeger.api.entities.impl.DynamicSpriteEntity;
 import com.github.hanyaeger.api.scenes.SceneBorder;
 import com.github.hanyaeger.api.userinput.KeyListener;
+import com.github.hanyaeger.api.userinput.MouseButtonPressedListener;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import org.example.ui.HealthBar;
 import org.example.ui.RoundText;
 
+import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class Player extends DynamicSpriteEntity implements KeyListener, SceneBorderTouchingWatcher, Collided, PlayerLocation {
+public class Player extends DynamicSpriteEntity implements KeyListener, SceneBorderTouchingWatcher, Collided, PlayerLocation, MouseButtonPressedListener {
 
     private SurvivalOutbreak survivalOutbreak;
     private HealthBar healthBar;
     private RoundText roundText;
     private int health = 100;
     private int round = 1;
-    private static final boolean ENABLE_LOCATION_LOGGING = true; // Toggle to enable/disable logging
+    private static final boolean ENABLE_LOCATION_LOGGING = false; // Toggle to enable/disable logging
 
     public Player(Coordinate2D location, HealthBar healthBar, RoundText roundText, SurvivalOutbreak survivalOutbreak) {
         super("sprites/sprite_sheet.png", location, new Size(25,25), 4, 3);
@@ -138,10 +141,19 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
         }
     }
 
+
     private void logLocation(String reason) {
         Coordinate2D location = getLocationInScene();
         System.out.println("Player location (" + reason + "): X=" +
                 String.format("%.2f", location.getX()) + ", Y=" +
                 String.format("%.2f", location.getY()));
     }
-}
+
+    @Override
+    public void onMouseButtonPressed(MouseButton mouseButton, Coordinate2D coordinate2D) {
+            double mouseX = 0;
+            double mouseY = 0;
+
+            System.out.println("Mouse click at: X=" + String.format("%.2f", mouseX) + ", Y=" + String.format("%.2f", mouseY));
+        }
+    }

@@ -57,10 +57,13 @@ public class Zombie extends DynamicCompositeEntity implements SceneBorderCrossin
             setAnchorLocation(new Coordinate2D(newX, newY));
 
             // Log for debugging
-            System.out.println("Zombie moved to: X=" + String.format("%.2f", newX) +
-                    ", Y=" + String.format("%.2f", newY));
-            System.out.println("Target player: X=" + String.format("%.2f", playerPos.getX()) +
-                    ", Y=" + String.format("%.2f", playerPos.getY()));
+            boolean enableLogging = false;
+            if(enableLogging) {
+                System.out.println("Zombie moved to: X=" + String.format("%.2f", newX) +
+                        ", Y=" + String.format("%.2f", newY));
+                System.out.println("Target player: X=" + String.format("%.2f", playerPos.getX()) +
+                        ", Y=" + String.format("%.2f", playerPos.getY()));
+            }
         }
     }
 
