@@ -32,9 +32,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private final Coordinate2D[] spawnPoints = {
             new Coordinate2D(100, 100),
             new Coordinate2D(500, 200),
-            new Coordinate2D(300, 400),
-            new Coordinate2D(700, 50),
-            new Coordinate2D(50, 500)
+            new Coordinate2D(300, 400)
     };
 
 
