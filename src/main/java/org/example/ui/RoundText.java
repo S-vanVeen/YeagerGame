@@ -7,6 +7,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 public class RoundText extends TextEntity {
+    private int round = 1;
     public RoundText(Coordinate2D initialLocation){
         super(initialLocation);
 
@@ -14,7 +15,15 @@ public class RoundText extends TextEntity {
         setFill(Color.WHITE);
     }
 
-    public void setRoundText(int round){
+    public void verhoogRonde() {
+        round++;
+    }
+
+    public void setRoundText(){
         setText("Ronde: " + round);
+    }
+
+    public int getRound() {
+        return round;
     }
 }

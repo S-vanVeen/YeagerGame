@@ -30,7 +30,7 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
         this.survivalOutbreak = survivalOutbreak;
         this.healthBar = healthBar;
         this.roundText = roundText;
-        roundText.setRoundText(round);
+        roundText.setRoundText();
 
         // Log initial location
         if (ENABLE_LOCATION_LOGGING) {

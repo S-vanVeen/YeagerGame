@@ -5,15 +5,18 @@ import com.github.hanyaeger.api.entities.DynamicCompositeEntity;
 import com.github.hanyaeger.api.entities.SceneBorderCrossingWatcher;
 import com.github.hanyaeger.api.scenes.SceneBorder;
 import org.example.PlayerLocation;
+import org.example.scenes.GameScene;
 
 public class Zombie extends DynamicCompositeEntity implements SceneBorderCrossingWatcher {
     private final PlayerLocation player;
     private static final double ZOMBIE_SPEED = 1.0; // Steps per update
+    private final GameScene gamescene;
 
-    public Zombie(PlayerLocation player) {
+    public Zombie(PlayerLocation player, GameScene gameScene) {
         // Always start at position (0, 0)
         super(new Coordinate2D(0, 0));
         this.player = player;
+        this.gamescene = gameScene;
 
         System.out.println("Zombie created at (0, 0)");
     }
@@ -23,7 +26,7 @@ public class Zombie extends DynamicCompositeEntity implements SceneBorderCrossin
         var zombieSprite = new ZombieSprite(new Coordinate2D(0, 0));
         addEntity(zombieSprite);
 
-        var hitBox = new HitBox(new Coordinate2D(0, 0), this);
+        var hitBox = new HitBox(new Coordinate2D(0, 0), this, gamescene);
         addEntity(hitBox);
     }
 
