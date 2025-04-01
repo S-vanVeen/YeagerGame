@@ -27,6 +27,17 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         this.survivalOutbreak = survivalOutbreak;
     }
 
+    private final ArrayList<Zombie> zombies = new ArrayList<>();
+    private final int maxZombies = 10;
+    private final Coordinate2D[] spawnPoints = {
+            new Coordinate2D(100, 100),
+            new Coordinate2D(500, 200),
+            new Coordinate2D(300, 400),
+            new Coordinate2D(700, 50),
+            new Coordinate2D(50, 500)
+    };
+
+
     @Override
     public void setupScene() {
         setBackgroundImage("images/startscreen_bg.jpg");
@@ -47,10 +58,24 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         player = new Player(new Coordinate2D(getWidth() / 2, getHeight() / 2), healthBar, roundText, survivalOutbreak);
         addEntity(player);
 
-        // Create zombie with player location
-        zombie = new Zombie(player);
-        addEntity(zombie);
+        // Spawn zombies
+        for (int i = 0; i < maxZombies; i++) {
+            Coordinate2D spawnPoint;
+
+            if (i < spawnPoints.length) {
+                spawnPoint = spawnPoints[i]; // Gebruik vaste spawnpunten als ze beschikbaar zijn
+            } else {
+                spawnPoint = new Coordinate2D(Math.random() * getWidth(), Math.random() * getHeight()); // Willekeurige locatie
+            }
+
+            Zombie zombie = new Zombie(player);
+            zombie.setAnchorLocation(spawnPoint);
+            zombies.add(zombie);
+            addEntity(zombie);
+        }
     }
+
+
 
     @Override
     public void setupTimers() {
@@ -64,8 +89,8 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
             System.out.println("Mouse clicked at: X=" + coordinate2D.getX() + ", Y=" + coordinate2D.getY());
 
             Bullet bullet = new Bullet(player.getLocation(), coordinate2D);
-            bullets.add(bullet);  // Add the bullet to the list
-            addEntity(bullet);  // Add the bullet to the scene
+            bullets.add(bullet);
+            addEntity(bullet);
         }
     }
 
@@ -78,7 +103,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
 
         @Override
         public void onAnimationUpdate(long timestamp) {
-            if (zombie != null) {
+            for (Zombie zombie : zombies) {
                 zombie.executeUpdates();
             }
         }

@@ -8,15 +8,10 @@ import com.github.hanyaeger.api.entities.SceneBorderTouchingWatcher;
 import com.github.hanyaeger.api.entities.impl.DynamicSpriteEntity;
 import com.github.hanyaeger.api.scenes.SceneBorder;
 import com.github.hanyaeger.api.userinput.KeyListener;
-import com.github.hanyaeger.api.userinput.MouseButtonPressedListener;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
 import org.example.ui.HealthBar;
 import org.example.ui.RoundText;
-import org.example.weapons.pistol.Bullet;
 import org.example.zombies.normalZombie.HitBox;
-
-import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;

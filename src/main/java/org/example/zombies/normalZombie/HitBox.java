@@ -25,7 +25,7 @@ public class HitBox extends RectangleEntity implements Collider, Collided {
         for (Collider collider : colliders) {
             if (collider instanceof Bullet) {
                 System.out.println("Zombie geraakt met schot!");
-                zombie.remove(); // Verwijder de zombie
+                zombie.remove();
             }
         }
     }
