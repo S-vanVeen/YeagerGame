@@ -20,9 +20,6 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private Zombie zombie;
     private Player player;
 
-    // ArrayList to store bullets
-    private final ArrayList<Bullet> bullets = new ArrayList<>();
-
     public GameScene(SurvivalOutbreak survivalOutbreak) {
         this.survivalOutbreak = survivalOutbreak;
     }
@@ -87,7 +84,6 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
             System.out.println("Mouse clicked at: X=" + coordinate2D.getX() + ", Y=" + coordinate2D.getY());
 
             Bullet bullet = new Bullet(player.getLocation(), coordinate2D);
-            bullets.add(bullet);
             addEntity(bullet);
         }
     }

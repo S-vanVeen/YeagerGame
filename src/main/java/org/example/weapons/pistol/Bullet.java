@@ -3,9 +3,11 @@ package org.example.weapons.pistol;
 import com.github.hanyaeger.api.Coordinate2D;
 import com.github.hanyaeger.api.Size;
 import com.github.hanyaeger.api.entities.Collider;
+import com.github.hanyaeger.api.entities.SceneBorderTouchingWatcher;
 import com.github.hanyaeger.api.entities.impl.DynamicSpriteEntity;
+import com.github.hanyaeger.api.scenes.SceneBorder;
 
-public class Bullet extends DynamicSpriteEntity implements Collider {
+public class Bullet extends DynamicSpriteEntity implements Collider, SceneBorderTouchingWatcher {
 
     public Bullet(Coordinate2D startLocation, Coordinate2D targetLocation) {
         super("sprites/bullet.png", startLocation, new Size(10, 10)); // Pas de sprite aan
@@ -26,5 +28,9 @@ public class Bullet extends DynamicSpriteEntity implements Collider {
     }
 
 
+    @Override
+    public void notifyBoundaryTouching(SceneBorder sceneBorder) {
+        this.remove();
+    }
 
 }

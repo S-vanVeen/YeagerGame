@@ -24,9 +24,14 @@ public class HitBox extends RectangleEntity implements Collider, Collided {
     public void onCollision(List<Collider> colliders) {
         for (Collider collider : colliders) {
             if (collider instanceof Bullet) {
+                Bullet bullet = (Bullet) collider; // Cast de collider naar een Bullet
+
                 System.out.println("Zombie geraakt met schot!");
-                zombie.remove();
+
+                bullet.remove(); // Verwijder de kogel uit de game
+                zombie.remove(); // Verwijder de zombie uit de game
             }
         }
     }
+
 }
