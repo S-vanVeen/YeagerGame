@@ -23,7 +23,7 @@ public class Zombie extends DynamicCompositeEntity implements SceneBorderCrossin
         var zombieSprite = new ZombieSprite(new Coordinate2D(0, 0));
         addEntity(zombieSprite);
 
-        var hitBox = new HitBox(new Coordinate2D(0, 0));
+        var hitBox = new HitBox(new Coordinate2D(0, 0), this);
         addEntity(hitBox);
     }
 
