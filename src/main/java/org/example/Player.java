@@ -13,6 +13,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import org.example.ui.HealthBar;
 import org.example.ui.RoundText;
+import org.example.weapons.pistol.Bullet;
+import org.example.zombies.normalZombie.HitBox;
 
 import java.awt.event.MouseListener;
 import java.util.List;
@@ -120,24 +122,28 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     }
 
     @Override
-    public void onCollision(List<Collider> collidingObject) {
-        Coordinate2D newLocation = new Coordinate2D(
-                new Random().nextInt((int) (getSceneWidth() - getWidth())),
-                new Random().nextInt((int) (getSceneHeight() - getHeight()))
-        );
+    public void onCollision(List<Collider> colliders) {
+        for (Collider collider : colliders) {
+            if (collider instanceof HitBox) {
+                Coordinate2D newLocation = new Coordinate2D(
+                        new Random().nextInt((int) (getSceneWidth() - getWidth())),
+                        new Random().nextInt((int) (getSceneHeight() - getHeight()))
+                );
 
-        setAnchorLocation(newLocation);
+                setAnchorLocation(newLocation);
 
-        health -= 10;
-        healthBar.updateHealth(health);
+                health -= 10;
+                healthBar.updateHealth(health);
 
-        if (health <= 0) {
-            survivalOutbreak.setActiveScene(3);
-        }
+                if (health <= 0) {
+                    survivalOutbreak.setActiveScene(3);
+                }
 
-        // Log position change after collision
-        if (ENABLE_LOCATION_LOGGING) {
-            logLocation("collision");
+                // Log position change after collision
+                if (ENABLE_LOCATION_LOGGING) {
+                    logLocation("collision");
+                }
+            }
         }
     }
 

@@ -5,6 +5,7 @@ import com.github.hanyaeger.api.entities.Collided;
 import com.github.hanyaeger.api.entities.Collider;
 import com.github.hanyaeger.api.entities.impl.RectangleEntity;
 import javafx.scene.paint.Color;
+import org.example.weapons.pistol.Bullet;
 
 import java.util.List;
 
@@ -18,8 +19,11 @@ public class HitBox extends RectangleEntity implements Collider, Collided {
         }
 
     @Override
-    public void onCollision(List<Collider> list) {
-//        zombie.delete();
-        System.out.println("Zombie geraakt met schot!");
+    public void onCollision(List<Collider> colliders) {
+        for (Collider collider : colliders) {
+            if (collider instanceof Bullet) {
+                System.out.println("Zombie geraakt met schot!");
+            }
+        }
     }
 }
