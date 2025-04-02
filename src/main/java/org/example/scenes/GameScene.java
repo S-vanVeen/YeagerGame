@@ -14,8 +14,8 @@ import org.example.ui.HealthBar;
 import org.example.ui.RoundText;
 import org.example.weapons.pistol.Bullet;
 import org.example.zombies.BaseZombie;
-import org.example.zombies.bigZombie.BigZombie;
-import org.example.zombies.normalZombie.Zombie;
+import org.example.zombies.BigZombie.BigZombie;
+import org.example.zombies.NormalZombie.Zombie;
 
 import java.util.ArrayList;
 import java.util.Random;

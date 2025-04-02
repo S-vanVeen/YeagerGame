@@ -1,4 +1,4 @@
-package org.example.zombies.normalZombie;
+package org.example.zombies.NormalZombie;
 
 import com.github.hanyaeger.api.Coordinate2D;
 import org.example.PlayerLocation;
