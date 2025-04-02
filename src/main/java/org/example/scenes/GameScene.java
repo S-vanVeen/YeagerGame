@@ -8,10 +8,12 @@ import com.github.hanyaeger.api.userinput.MouseButtonPressedListener;
 import javafx.scene.input.MouseButton;
 import org.example.Player;
 import org.example.SurvivalOutbreak;
+import org.example.ui.AmmoText;
 import org.example.ui.Cash;
 import org.example.ui.CountdownTimer;
 import org.example.ui.HealthBar;
 import org.example.ui.RoundText;
+import org.example.weapons.Ammunition;
 import org.example.weapons.pistol.Bullet;
 import org.example.zombies.BaseZombie;
 import org.example.zombies.BigZombie.BigZombie;
@@ -26,9 +28,13 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private CountdownTimer countdownTimer;
     private Player player;
     private Cash cash;
+    private Ammunition ammunition;
     private final ArrayList<BaseZombie> zombies = new ArrayList<>(); // Changed to BaseZombie
     private int maxZombies = 10;
     private static final int ROUND_DELAY_SECONDS = 30;
+    private static final int STARTING_AMMO = 12;
+    private static final int MAX_AMMO = 24;
+    private static final int RELOAD_TIME_MS = 1000; // 2 seconds to reload
     private final Random random = new Random();
 
     private final Coordinate2D[] spawnPoints = {
@@ -59,7 +65,14 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         cash = new Cash(new Coordinate2D(200, getHeight() - 60));
         addEntity(cash.getCashText());
 
+        // Create ammo system and display
+        ammunition = new Ammunition(STARTING_AMMO, MAX_AMMO);
+        AmmoText ammoText = new AmmoText(new Coordinate2D(350, getHeight() - 60));
+        ammunition.setAmmoText(ammoText);
+        addEntity(ammoText);
+
         attachMouseButtonPressedListener();
+        // No need to attach key listener here - the Player entity handles that
 
         roundText = new RoundText(new Coordinate2D(50, 50));
         roundText.setRoundText();
@@ -71,6 +84,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         addEntity(countdownTimer);
 
         player = new Player(new Coordinate2D(getWidth() / 2, getHeight() / 2), healthBar, roundText, survivalOutbreak);
+        player.setAmmunition(ammunition); // Connect player to ammunition system
         addEntity(player);
 
         spawnZombies();
@@ -101,14 +115,26 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     public void setupTimers() {
         addTimer(new ZombieUpdater(10)); // Update zombies every 10 ms
         addTimer(new RoundManager(1000)); // Check round status every second and handle countdown
+        addTimer(new ReloadTimer(RELOAD_TIME_MS)); // Handle reloading
     }
 
     @Override
     public void onMouseButtonPressed(MouseButton button, Coordinate2D coordinate2D) {
-        if (button == MouseButton.PRIMARY) {
-            System.out.println("Mouse clicked at: X=" + coordinate2D.getX() + ", Y=" + coordinate2D.getY());
-            Bullet bullet = new Bullet(player.getLocation(), coordinate2D);
-            addEntity(bullet);
+        if (button == MouseButton.PRIMARY && !player.isReloading()) {
+            if (ammunition.getCurrentAmmo() > 0) {
+                System.out.println("Mouse clicked at: X=" + coordinate2D.getX() + ", Y=" + coordinate2D.getY());
+                Bullet bullet = new Bullet(player.getLocation(), coordinate2D);
+                addEntity(bullet);
+                ammunition.useAmmo();
+            } else {
+                System.out.println("Out of ammo! Press R to reload.");
+                // Auto-trigger reload when trying to shoot with no ammo, but only if standing still
+                if (player.getSpeed() == 0) {
+                    player.startReloading();
+                } else {
+                    System.out.println("Stop moving to reload!");
+                }
+            }
         }
     }
 
@@ -135,6 +161,10 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
                 countdownActive = true;
                 countdownTimer.reset(ROUND_DELAY_SECONDS);
                 countdownTimer.setOpacity(1); // Show the countdown timer
+
+                // Reload ammunition at the end of each round
+                ammunition.reload();
+
                 System.out.println("All zombies defeated. Waiting " + ROUND_DELAY_SECONDS + " seconds for the next round.");
             } else if (!zombies.isEmpty()) {
                 for (BaseZombie zombie : zombies) {
@@ -160,6 +190,31 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
                     countdownActive = false;
                     countdownTimer.setOpacity(0); // Hide the countdown timer
                     roundReadyToStart = false; // Reset round status
+                }
+            }
+        }
+    }
+
+    private class ReloadTimer extends Timer {
+        private int reloadDuration;
+        private int reloadProgress = 0;
+
+        public ReloadTimer(long intervalInMs) {
+            super(50); // Update every 50ms for smooth reload
+            this.reloadDuration = (int)(intervalInMs / 50); // Convert to timer ticks
+        }
+
+        @Override
+        public void onAnimationUpdate(long timestamp) {
+            // Check if player is reloading
+            if (player.isReloading()) {
+                reloadProgress++;
+
+                // Reload complete
+                if (reloadProgress >= reloadDuration) {
+                    ammunition.reload();
+                    player.completeReload();
+                    reloadProgress = 0;
                 }
             }
         }
