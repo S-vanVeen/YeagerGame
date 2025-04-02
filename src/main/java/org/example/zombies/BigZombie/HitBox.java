@@ -1,4 +1,4 @@
-package org.example.zombies.normalZombie;
+package org.example.zombies.bigZombie;
 
 import com.github.hanyaeger.api.Coordinate2D;
 import com.github.hanyaeger.api.entities.Collided;
@@ -11,16 +11,15 @@ import java.util.List;
 
 public class HitBox extends RectangleEntity implements Collider, Collided {
 
-    private final Zombie zombie; // Referentie naar de zombie
-    private final GameScene gameScene; // Verwijzing naar de GameScene
+    private final BigZombie zombie; // Reference to the BigZombie
+    private final GameScene gameScene; // Reference to the GameScene
 
-    // Pas de constructor aan zodat je ook de GameScene meegeeft
-    protected HitBox(final Coordinate2D initialPosition, Zombie zombie, GameScene gameScene) {
+    protected HitBox(final Coordinate2D initialPosition, BigZombie zombie, GameScene gameScene) {
         super(initialPosition);
         this.zombie = zombie;
         this.gameScene = gameScene;
-        setWidth(20);
-        setHeight(25);
+        setWidth(35);  // Larger hitbox
+        setHeight(40); // Taller hitbox
         setFill(Color.TRANSPARENT);
     }
 
@@ -30,11 +29,13 @@ public class HitBox extends RectangleEntity implements Collider, Collided {
             if (collider instanceof Bullet) {
                 Bullet bullet = (Bullet) collider;
 
-                System.out.println("Zombie geraakt met schot!");
+                System.out.println("BigZombie hit with bullet!");
 
-                bullet.remove(); // Verwijder de kogel uit de game
-                zombie.remove(); // Verwijder de zombie uit de game
-                gameScene.removeZombie(zombie); // Verwijder de zombie uit de lijst
+                // Remove the bullet
+                bullet.remove();
+
+                // Apply damage to the zombie (will handle death internally if health <= 0)
+                zombie.takeDamage(1);
             }
         }
     }

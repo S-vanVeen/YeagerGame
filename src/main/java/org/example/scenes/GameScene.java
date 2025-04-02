@@ -8,19 +8,28 @@ import com.github.hanyaeger.api.userinput.MouseButtonPressedListener;
 import javafx.scene.input.MouseButton;
 import org.example.Player;
 import org.example.SurvivalOutbreak;
+import org.example.ui.Cash;
+import org.example.ui.CountdownTimer;
 import org.example.ui.HealthBar;
 import org.example.ui.RoundText;
 import org.example.weapons.pistol.Bullet;
+import org.example.zombies.BaseZombie;
+import org.example.zombies.bigZombie.BigZombie;
 import org.example.zombies.normalZombie.Zombie;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameScene extends DynamicScene implements TimerContainer, MouseButtonPressedListener {
     private final SurvivalOutbreak survivalOutbreak;
     private RoundText roundText;
+    private CountdownTimer countdownTimer;
     private Player player;
-    private final ArrayList<Zombie> zombies = new ArrayList<>();
+    private Cash cash;
+    private final ArrayList<BaseZombie> zombies = new ArrayList<>(); // Changed to BaseZombie
     private int maxZombies = 10;
+    private static final int ROUND_DELAY_SECONDS = 30;
+    private final Random random = new Random();
 
     private final Coordinate2D[] spawnPoints = {
             new Coordinate2D(100, 100),
@@ -28,7 +37,8 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
             new Coordinate2D(300, 400)
     };
 
-    private boolean roundReadyToStart = false; // Dit wordt gebruikt om aan te geven of de nieuwe ronde moet beginnen.
+    private boolean roundReadyToStart = false;
+    private boolean countdownActive = false;
 
     public GameScene(SurvivalOutbreak survivalOutbreak) {
         this.survivalOutbreak = survivalOutbreak;
@@ -45,10 +55,20 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         addEntity(healthBar);
         addEntity(healthBar.getHealthText());
 
+        // Create Cash display to the right of the health bar
+        cash = new Cash(new Coordinate2D(200, getHeight() - 60));
+        addEntity(cash.getCashText());
+
         attachMouseButtonPressedListener();
 
-        roundText = new RoundText(new Coordinate2D(50, 50)); // Hier moet roundText een instantie zijn van RoundText
+        roundText = new RoundText(new Coordinate2D(50, 50));
+        roundText.setRoundText();
         addEntity(roundText);
+
+        // Create countdown timer in center of screen, but hide it initially
+        countdownTimer = new CountdownTimer(new Coordinate2D(getWidth() / 2 - 150, 25), ROUND_DELAY_SECONDS);
+        countdownTimer.setOpacity(0); // Hide initially
+        addEntity(countdownTimer);
 
         player = new Player(new Coordinate2D(getWidth() / 2, getHeight() / 2), healthBar, roundText, survivalOutbreak);
         addEntity(player);
@@ -59,8 +79,18 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private void spawnZombies() {
         zombies.clear();
         for (int i = 0; i < maxZombies; i++) {
-            Coordinate2D spawnPoint = (i < spawnPoints.length) ? spawnPoints[i] : new Coordinate2D(Math.random() * getWidth(), Math.random() * getHeight());
-            Zombie zombie = new Zombie(player, this);
+            Coordinate2D spawnPoint = (i < spawnPoints.length) ?
+                    spawnPoints[i] :
+                    new Coordinate2D(Math.random() * getWidth(), Math.random() * getHeight());
+
+            // Decide what type of zombie to spawn (20% chance for BigZombie)
+            BaseZombie zombie;
+            if (random.nextDouble() < 0.2) {
+                zombie = new BigZombie(player, this);
+            } else {
+                zombie = new Zombie(player, this);
+            }
+
             zombie.setAnchorLocation(spawnPoint);
             zombies.add(zombie);
             addEntity(zombie);
@@ -70,7 +100,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     @Override
     public void setupTimers() {
         addTimer(new ZombieUpdater(10)); // Update zombies every 10 ms
-        addTimer(new RoundManager(30000)); // 30 seconds timer for a new round (after all zombies are killed)
+        addTimer(new RoundManager(1000)); // Check round status every second and handle countdown
     }
 
     @Override
@@ -82,8 +112,14 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         }
     }
 
-    public void removeZombie(Zombie zombie) {
+    // Updated to accept BaseZombie instead of just Zombie
+    public void removeZombie(BaseZombie zombie) {
         zombies.remove(zombie);
+    }
+
+    public void addCash(int amount) {
+        cash.increase(amount);
+        System.out.println("Cash increased by " + amount + ". New total: $" + cash.getAmount());
     }
 
     private class ZombieUpdater extends Timer {
@@ -93,12 +129,15 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
 
         @Override
         public void onAnimationUpdate(long timestamp) {
-            if (zombies.isEmpty() && !roundReadyToStart) {
-                // Alle zombies zijn verslagen, we stellen de ronde als klaar om te starten in
+            if (zombies.isEmpty() && !roundReadyToStart && !countdownActive) {
+                // All zombies are defeated, start the countdown
                 roundReadyToStart = true;
-                System.out.println("Alle zombies zijn verslagen, wacht 30 seconden voor de nieuwe ronde.");
-            } else {
-                for (Zombie zombie : zombies) {
+                countdownActive = true;
+                countdownTimer.reset(ROUND_DELAY_SECONDS);
+                countdownTimer.setOpacity(1); // Show the countdown timer
+                System.out.println("All zombies defeated. Waiting " + ROUND_DELAY_SECONDS + " seconds for the next round.");
+            } else if (!zombies.isEmpty()) {
+                for (BaseZombie zombie : zombies) {
                     zombie.executeUpdates(); // Perform updates for each zombie
                 }
             }
@@ -112,10 +151,16 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
 
         @Override
         public void onAnimationUpdate(long timestamp) {
-            if (roundReadyToStart) {
-                // Wacht 60 seconden na het verslaan van alle zombies om de nieuwe ronde te starten
-                startNextRound();
-                roundReadyToStart = false; // Reset de ronde status
+            if (countdownActive) {
+                countdownTimer.tick(); // Update countdown every second
+
+                if (countdownTimer.getSecondsLeft() <= 0) {
+                    // Countdown finished, start the next round
+                    startNextRound();
+                    countdownActive = false;
+                    countdownTimer.setOpacity(0); // Hide the countdown timer
+                    roundReadyToStart = false; // Reset round status
+                }
             }
         }
     }
@@ -125,6 +170,6 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         roundText.setRoundText();
         maxZombies = (int) (maxZombies * 1.5);
         spawnZombies();
-        System.out.println("Ronde " + roundText.getRound() + " gestart met " + maxZombies + " zombies!");
+        System.out.println("Round " + roundText.getRound() + " started with " + maxZombies + " zombies!");
     }
 }

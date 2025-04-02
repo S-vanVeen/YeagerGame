@@ -1,4 +1,4 @@
-package org.example.zombies.normalZombie;
+package org.example.zombies;
 
 import com.github.hanyaeger.api.Coordinate2D;
 import com.github.hanyaeger.api.entities.DynamicCompositeEntity;
@@ -7,34 +7,31 @@ import com.github.hanyaeger.api.scenes.SceneBorder;
 import org.example.PlayerLocation;
 import org.example.scenes.GameScene;
 
-public class Zombie extends DynamicCompositeEntity implements SceneBorderCrossingWatcher {
-    private final PlayerLocation player;
-    private static final double ZOMBIE_SPEED = 1.0; // Steps per update
-    private final GameScene gamescene;
+public abstract class BaseZombie extends DynamicCompositeEntity implements SceneBorderCrossingWatcher {
+    protected final PlayerLocation player;
+    protected double zombieSpeed;
+    protected final GameScene gameScene;
+    protected int reward;
+    protected int health;
 
-    public Zombie(PlayerLocation player, GameScene gameScene) {
+    public BaseZombie(PlayerLocation player, GameScene gameScene, double speed, int reward, int health) {
         // Always start at position (0, 0)
         super(new Coordinate2D(0, 0));
         this.player = player;
-        this.gamescene = gameScene;
-
-        System.out.println("Zombie created at (0, 0)");
+        this.gameScene = gameScene;
+        this.zombieSpeed = speed;
+        this.reward = reward;
+        this.health = health;
     }
 
     @Override
-    protected void setupEntities() {
-        var zombieSprite = new ZombieSprite(new Coordinate2D(0, 0));
-        addEntity(zombieSprite);
-
-        var hitBox = new HitBox(new Coordinate2D(0, 0), this, gamescene);
-        addEntity(hitBox);
-    }
+    protected abstract void setupEntities();
 
     public void executeUpdates() {
         moveDirectlyTowardsPlayer();
     }
 
-    private void moveDirectlyTowardsPlayer() {
+    protected void moveDirectlyTowardsPlayer() {
         // Get current positions
         Coordinate2D playerPos = player.getLocation();
         Coordinate2D zombiePos = getLocationInScene();
@@ -53,20 +50,11 @@ public class Zombie extends DynamicCompositeEntity implements SceneBorderCrossin
             double dirY = deltaY / distance;
 
             // Calculate new position (move one step toward player)
-            double newX = zombiePos.getX() + dirX * ZOMBIE_SPEED;
-            double newY = zombiePos.getY() + dirY * ZOMBIE_SPEED;
+            double newX = zombiePos.getX() + dirX * zombieSpeed;
+            double newY = zombiePos.getY() + dirY * zombieSpeed;
 
             // Update zombie position
             setAnchorLocation(new Coordinate2D(newX, newY));
-
-            // Log for debugging
-            boolean enableLogging = false;
-            if(enableLogging) {
-                System.out.println("Zombie moved to: X=" + String.format("%.2f", newX) +
-                        ", Y=" + String.format("%.2f", newY));
-                System.out.println("Target player: X=" + String.format("%.2f", playerPos.getX()) +
-                        ", Y=" + String.format("%.2f", playerPos.getY()));
-            }
         }
     }
 
@@ -74,6 +62,23 @@ public class Zombie extends DynamicCompositeEntity implements SceneBorderCrossin
     public void notifyBoundaryCrossing(SceneBorder border) {
         // Reset to (0, 0) when crossing any boundary
         setAnchorLocation(new Coordinate2D(0, 0));
-        System.out.println("Zombie crossed border, resetting to (0, 0)");
+        System.out.println(getClass().getSimpleName() + " crossed border, resetting to (0, 0)");
+    }
+
+    public int getReward() {
+        return reward;
+    }
+
+    public void takeDamage(int damage) {
+        health -= damage;
+        if (health <= 0) {
+            handleDeath();
+        }
+    }
+
+    protected void handleDeath() {
+        remove();
+        gameScene.removeZombie(this);
+        gameScene.addCash(reward);
     }
 }

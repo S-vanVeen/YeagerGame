@@ -11,7 +11,7 @@ import com.github.hanyaeger.api.userinput.KeyListener;
 import javafx.scene.input.KeyCode;
 import org.example.ui.HealthBar;
 import org.example.ui.RoundText;
-import org.example.zombies.normalZombie.HitBox;
+import org.example.zombies.NormalZombie.HitBox;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;

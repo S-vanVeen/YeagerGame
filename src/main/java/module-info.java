@@ -7,7 +7,7 @@ module OutbreakSurvival {
     opens images;
     opens audio;
     opens sprites;
-    exports org.example.zombies.normalZombie;
+    exports org.example.zombies.NormalZombie;
     exports org.example.scenes;
     exports org.example.buttons;
 }
