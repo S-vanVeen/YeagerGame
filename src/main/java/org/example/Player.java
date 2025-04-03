@@ -33,7 +33,7 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     private static final int SPRITE_ROW_DOWN = 1;
     private static final int SPRITE_ROW_LEFT = 2;
     private static final int SPRITE_ROW_RIGHT = 3;
-    private static final int SPRITE_RELOAD = 9; // Additional sprite for reload animation (if available)
+   // private static final int SPRITE_RELOAD = 9; // Additional sprite for reload animation (if available)
 
     private int lastDirection = SPRITE_ROW_DOWN; // Track last movement direction
 
