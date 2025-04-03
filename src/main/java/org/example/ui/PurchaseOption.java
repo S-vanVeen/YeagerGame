@@ -47,7 +47,6 @@ public class PurchaseOption extends TextEntity implements MouseButtonPressedList
         setFont(Font.font("Roboto", FontWeight.BOLD, 18));
         setFill(Color.YELLOW);
 
-        // Ensure click events are captured
         attachMouseButtonPressedListener();
     }
 

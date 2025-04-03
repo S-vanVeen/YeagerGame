@@ -11,15 +11,15 @@ import java.util.List;
 
 public class HitBox extends RectangleEntity implements Collider, Collided {
 
-    private final BigZombie zombie; // Reference to the BigZombie
-    private final GameScene gameScene; // Reference to the GameScene
+    private final BigZombie zombie;
+    private final GameScene gameScene;
 
     protected HitBox(final Coordinate2D initialPosition, BigZombie zombie, GameScene gameScene) {
         super(initialPosition);
         this.zombie = zombie;
         this.gameScene = gameScene;
-        setWidth(35);  // Larger hitbox
-        setHeight(40); // Taller hitbox
+        setWidth(35);
+        setHeight(40);
         setFill(Color.TRANSPARENT);
     }
 
@@ -28,13 +28,8 @@ public class HitBox extends RectangleEntity implements Collider, Collided {
         for (Collider collider : colliders) {
             if (collider instanceof Bullet) {
                 Bullet bullet = (Bullet) collider;
-
                 System.out.println("BigZombie hit with bullet!");
-
-                // Remove the bullet
                 bullet.remove();
-
-                // Apply damage to the zombie (will handle death internally if health <= 0)
                 zombie.takeDamage(1);
             }
         }

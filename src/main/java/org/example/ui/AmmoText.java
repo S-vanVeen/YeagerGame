@@ -17,7 +17,6 @@ public class AmmoText extends TextEntity {
     public void update(int currentAmmo, int maxAmmo) {
         setText("Ammo: " + currentAmmo + " / " + maxAmmo);
 
-        // Change color based on ammo levels
         if (currentAmmo == 0) {
             setFill(Color.RED);
         } else if (currentAmmo <= maxAmmo * 0.25) {

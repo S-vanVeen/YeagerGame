@@ -21,21 +21,18 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
 
     private SurvivalOutbreak survivalOutbreak;
     private HealthBar healthBar;
-    private RoundText roundText;
-    private Ammunition ammunition; // Reference to the ammunition system
-    private boolean isReloading = false; // Tracks if player is currently reloading
+    private RoundText roundText;//?
+    private Ammunition ammunition;
+    private boolean isReloading = false;
     private int health = 100;
-    private int round = 1;
-    private static final boolean ENABLE_LOCATION_LOGGING = false; // Toggle to enable/disable logging
+    private int round = 1;//?
+    private final boolean ENABLE_LOCATION_LOGGING = false; //Kan later weg
+    private final int SPRITE_ROW_UP = 0;
+    private final int SPRITE_ROW_DOWN = 1;
+    private final int SPRITE_ROW_LEFT = 2;
+    private final int SPRITE_ROW_RIGHT = 3;
 
-    // Sprite indices for animation
-    private static final int SPRITE_ROW_UP = 0;
-    private static final int SPRITE_ROW_DOWN = 1;
-    private static final int SPRITE_ROW_LEFT = 2;
-    private static final int SPRITE_ROW_RIGHT = 3;
-   // private static final int SPRITE_RELOAD = 9; // Additional sprite for reload animation (if available)
-
-    private int lastDirection = SPRITE_ROW_DOWN; // Track last movement direction
+    private int lastDirection = SPRITE_ROW_DOWN;
 
     public Player(Coordinate2D location, HealthBar healthBar, RoundText roundText, SurvivalOutbreak survivalOutbreak) {
         super("sprites/sprite_sheet.png", location, new Size(25, 25), 4, 3);
@@ -44,26 +41,16 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
         this.roundText = roundText;
         roundText.setRoundText();
 
-        // Log initial location
         if (ENABLE_LOCATION_LOGGING) {
             System.out.println("Player initial location: X=" + location.getX() + ", Y=" + location.getY());
         }
     }
 
-    /**
-     * Set the ammunition system for this player
-     * @param ammunition The ammunition system to use
-     */
     public void setAmmunition(Ammunition ammunition) {
         this.ammunition = ammunition;
     }
 
-    /**
-     * Start the reloading animation
-     * @return true if reload started successfully, false otherwise
-     */
     public boolean startReloading() {
-        // Check if player is standing still (not moving) by checking speed
         if (getSpeed() > 0) {
             System.out.println("Cannot reload while moving. Stop first!");
             return false;
@@ -71,17 +58,13 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
 
         if (!isReloading && ammunition != null && ammunition.getCurrentAmmo() < ammunition.getMaxAmmo()) {
             isReloading = true;
-            // If you have a reloading sprite/animation, set it here
-            // setCurrentFrameIndex(SPRITE_RELOAD);
+            // Hier mischien geluidje neer zetten
             System.out.println("Player is reloading...");
             return true;
         }
         return false;
     }
 
-    /**
-     * Complete the reload process
-     */
     public void completeReload() {
         if (isReloading) {
             isReloading = false;
@@ -97,10 +80,6 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
         System.out.println("Player health increased to: " + health);
     }
 
-    /**
-     * Check if player is currently reloading
-     * @return true if reloading, false otherwise
-     */
     public boolean isReloading() {
         return isReloading;
     }
@@ -108,8 +87,6 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     @Override
     public Coordinate2D getLocation() {
         Coordinate2D location = getLocationInScene();
-
-        // Log the location when it's requested (typically by the zombie)
         if (ENABLE_LOCATION_LOGGING) {
             System.out.println("Player location (requested): X=" +
                     String.format("%.2f", location.getX()) + ", Y=" +
@@ -122,8 +99,6 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     @Override
     public void onPressedKeysChange(Set<KeyCode> pressedKeys) {
         boolean moved = false;
-
-        // Don't respond to movement keys if reloading
         if (!isReloading) {
             if (pressedKeys.contains(KeyCode.W)) {
                 setMotion(1.5, 180d);
@@ -154,15 +129,12 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
             }
         }
 
-        // Handle reload key press - only works when standing still
         if (pressedKeys.contains(KeyCode.R)) {
             if (ammunition != null && !isReloading && ammunition.getCurrentAmmo() < ammunition.getMaxAmmo()) {
-                // Will only reload if player is standing still (checked inside startReloading)
                 startReloading();
             }
         }
 
-        // If no keys pressed, make sure player stops completely
         if (pressedKeys.isEmpty() && !isReloading) {
             setSpeed(0);
             setAutoCycle(0);
@@ -197,8 +169,7 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
             default:
                 break;
         }
-
-        // Log position change when hitting boundary
+        //kan weg later
         if (ENABLE_LOCATION_LOGGING) {
             logLocation("boundary touch");
         }
@@ -227,7 +198,7 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
                     survivalOutbreak.setActiveScene(3);
                 }
 
-                // Log position change after collision
+                // Kan weg later
                 if (ENABLE_LOCATION_LOGGING) {
                     logLocation("collision");
                 }

@@ -11,10 +11,9 @@ import java.util.List;
 
 public class HitBox extends RectangleEntity implements Collider, Collided {
 
-    private final Zombie zombie; // Referentie naar de zombie
-    private final GameScene gameScene; // Verwijzing naar de GameScene
+    private final Zombie zombie;
+    private final GameScene gameScene;
 
-    // Pas de constructor aan zodat je ook de GameScene meegeeft
     protected HitBox(final Coordinate2D initialPosition, Zombie zombie, GameScene gameScene) {
         super(initialPosition);
         this.zombie = zombie;
@@ -29,13 +28,8 @@ public class HitBox extends RectangleEntity implements Collider, Collided {
         for (Collider collider : colliders) {
             if (collider instanceof Bullet) {
                 Bullet bullet = (Bullet) collider;
-
                 System.out.println("Zombie geraakt met schot!");
-
-                // Remove the bullet
                 bullet.remove();
-
-                // Apply damage to the zombie (will handle death internally if health <= 0)
                 zombie.takeDamage(1);
             }
         }

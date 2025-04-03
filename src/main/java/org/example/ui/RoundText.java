@@ -18,7 +18,7 @@ public class RoundText extends TextEntity {
     public void verhoogRonde() {
         round++;
     }
-
+    //Wordt niet meer gebruikt?
     public void volgendeRondeTimer() {
         setText("Seconden tot volgende ronde");
     }

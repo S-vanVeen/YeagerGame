@@ -31,18 +31,18 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private Player player;
     private Cash cash;
     private Ammunition ammunition;
-    private final ArrayList<BaseZombie> zombies = new ArrayList<>(); // Changed to BaseZombie
+    private final ArrayList<BaseZombie> zombies = new ArrayList<>();
     private int maxZombies = 10;
-    private static final int ROUND_DELAY_SECONDS = 30;
-    private static final int STARTING_AMMO = 12;
-    private static final int MAX_AMMO = 24;
-    private static final int RELOAD_TIME_MS = 1000; // 2 seconds to reload
+    private int ROUND_DELAY_SECONDS = 30;
+    private int STARTING_AMMO = 12;
+    private int MAX_AMMO = 24;
+    private int RELOAD_TIME_MS = 1000;
     private final Random random = new Random();
     private PurchaseOption healthUpgradeOption;
     private PurchaseOption ammoUpgradeOption;
     private PurchaseOption ammoRefillOption;
-    private static final int HEALTH_UPGRADE_AMOUNT = 25;
-    private static final int AMMO_UPGRADE_AMOUNT = 24;
+    private int HEALTH_UPGRADE_AMOUNT = 25;
+    private int AMMO_UPGRADE_AMOUNT = 24;
 
     private final Coordinate2D[] spawnPoints = {
             new Coordinate2D(100, 100),
@@ -68,24 +68,20 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         addEntity(healthBar);
         addEntity(healthBar.getHealthText());
 
-        // Create Cash display to the right of the health bar
         cash = new Cash(new Coordinate2D(200, getHeight() - 60));
         addEntity(cash.getCashText());
 
-        // Create ammo system and display
         ammunition = new Ammunition(STARTING_AMMO, MAX_AMMO);
         AmmoText ammoText = new AmmoText(new Coordinate2D(350, getHeight() - 60));
         ammunition.setAmmoText(ammoText);
         addEntity(ammoText);
 
         attachMouseButtonPressedListener();
-        // No need to attach key listener here - the Player entity handles that
 
         roundText = new RoundText(new Coordinate2D(50, 50));
         roundText.setRoundText();
         addEntity(roundText);
 
-        // Create countdown timer in center of screen, but hide it initially
         countdownTimer = new CountdownTimer(new Coordinate2D(getWidth() / 2 - 150, 25), ROUND_DELAY_SECONDS);
         countdownTimer.setOpacity(0); // Hide initially
         addEntity(countdownTimer);
@@ -104,9 +100,8 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
                     spawnPoints[i] :
                     new Coordinate2D(Math.random() * getWidth(), Math.random() * getHeight());
 
-            // Decide what type of zombie to spawn (20% chance for BigZombie)
             BaseZombie zombie;
-            if (random.nextDouble() < 0.2) {
+            if (random.nextDouble() < 0.2) { //kans voor bigzombie
                 zombie = new BigZombie(player, this);
             } else {
                 zombie = new Zombie(player, this);
@@ -120,9 +115,9 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
 
     @Override
     public void setupTimers() {
-        addTimer(new ZombieUpdater(10)); // Update zombies every 10 ms
-        addTimer(new RoundManager(1000)); // Check round status every second and handle countdown
-        addTimer(new ReloadTimer(RELOAD_TIME_MS)); // Handle reloading
+        addTimer(new ZombieUpdater(10)); // Update zombies elke 10ms
+        addTimer(new RoundManager(1000)); // Checkt status van ronde en voor de countdown
+        addTimer(new ReloadTimer(RELOAD_TIME_MS));
     }
 
     @Override
@@ -135,7 +130,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
                 ammunition.useAmmo();
             } else {
                 System.out.println("Out of ammo! Press R to reload.");
-                // Auto-trigger reload when trying to shoot with no ammo, but only if standing still
+                // automatisch herladen waneer je zonder ammo probeert te shcieten
                 if (player.getSpeed() == 0) {
                     player.startReloading();
                 } else {
@@ -145,7 +140,6 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         }
     }
 
-    // Updated to accept BaseZombie instead of just Zombie
     public void removeZombie(BaseZombie zombie) {
         zombies.remove(zombie);
     }
@@ -163,20 +157,18 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         @Override
         public void onAnimationUpdate(long timestamp) {
             if (zombies.isEmpty() && !roundReadyToStart && !countdownActive) {
-                // All zombies are defeated, start the countdown
                 roundReadyToStart = true;
                 countdownActive = true;
                 countdownTimer.reset(ROUND_DELAY_SECONDS);
-                countdownTimer.setOpacity(1); // Show the countdown timer
-                showPurchaseOptions(); // Show purchase options when countdown starts
+                countdownTimer.setOpacity(1);
+                showPurchaseOptions();
 
-                // Reload ammunition at the end of each round
                 ammunition.reload();
 
                 System.out.println("All zombies defeated. Waiting " + ROUND_DELAY_SECONDS + " seconds for the next round.");
             } else if (!zombies.isEmpty()) {
                 for (BaseZombie zombie : zombies) {
-                    zombie.executeUpdates(); // Perform updates for each zombie
+                    zombie.executeUpdates();
                 }
             }
         }
@@ -190,15 +182,14 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         @Override
         public void onAnimationUpdate(long timestamp) {
             if (countdownActive) {
-                countdownTimer.tick(); // Update countdown every second
+                countdownTimer.tick(); //elke seconde
 
                 if (countdownTimer.getSecondsLeft() <= 0) {
-                    // Countdown finished, start the next round
-                    hidePurchaseOptions(); // Hide purchase options
+                    hidePurchaseOptions();
                     startNextRound();
                     countdownActive = false;
-                    countdownTimer.setOpacity(0); // Hide the countdown timer
-                    roundReadyToStart = false; // Reset round status
+                    countdownTimer.setOpacity(0);
+                    roundReadyToStart = false;
                 }
             }
         }
@@ -209,17 +200,15 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         private int reloadProgress = 0;
 
         public ReloadTimer(long intervalInMs) {
-            super(50); // Update every 50ms for smooth reload
+            super(50); //
             this.reloadDuration = (int)(intervalInMs / 50); // Convert to timer ticks
         }
 
         @Override
         public void onAnimationUpdate(long timestamp) {
-            // Check if player is reloading
             if (player.isReloading()) {
                 reloadProgress++;
 
-                // Reload complete
                 if (reloadProgress >= reloadDuration) {
                     ammunition.reload();
                     player.completeReload();
@@ -238,10 +227,8 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         System.out.println("Round " + roundText.getRound() + " started with " + maxZombies + " zombies!");
     }
     private void showPurchaseOptions() {
-        // Position on the right side of the screen
-        double rightSideX = getWidth() - 400; // 300 pixels from the right edge
+        double rightSideX = getWidth() - 400;
 
-        // Create purchase options if they don't exist yet
         if (healthUpgradeOption == null) {
             healthUpgradeOption = new PurchaseOption(
                     new Coordinate2D(rightSideX, 150),
@@ -260,15 +247,11 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
             );
         }
 
-        // Add entities to the scene
         addEntity(healthUpgradeOption);
         addEntity(ammoUpgradeOption);
         addEntity(ammoRefillOption);
     }
 
-    /**
-     * Hides purchase options
-     */
     private void hidePurchaseOptions() {
         if (healthUpgradeOption != null) {
             healthUpgradeOption.remove();
@@ -277,29 +260,22 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         }
     }
 
-    /**
-     * Processes a purchase when a purchase option is clicked
-     */
     private void processPurchase(PurchaseType type, int cost) {
-        // Check if player can afford the purchase
         if (cash.getAmount() >= cost) {
-            cash.increase(-cost); // Deduct cost
+            cash.increase(-cost);
 
             switch (type) {
                 case HEALTH_UPGRADE:
-                    // Increase player's max health
                     player.increaseMaxHealth(HEALTH_UPGRADE_AMOUNT);
                     System.out.println("Health upgraded! +25 max health");
                     break;
 
                 case AMMO_UPGRADE:
-                    // Increase max ammo capacity
                     ammunition.increaseMaxAmmo(AMMO_UPGRADE_AMOUNT);
                     System.out.println("Ammo capacity upgraded! +24 max ammo");
                     break;
 
                 case AMMO_REFILL:
-                    // Refill ammo to max capacity
                     ammunition.reload();
                     System.out.println("Ammo refilled to maximum!");
                     break;
