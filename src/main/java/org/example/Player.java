@@ -179,7 +179,6 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     public void onCollision(List<Collider> colliders) {
         for (Collider collider : colliders) {
             if (collider instanceof HitBox) {
-                // Cancel reloading if hit by zombie
                 if (isReloading) {
                     isReloading = false;
                 }

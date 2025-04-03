@@ -39,8 +39,13 @@ public class HealthBar extends RectangleEntity {
     }
 
     private void updateHealthBar() {
-        double healthPercentage = currentHealth / maxHealth;
+        // Calculate health percentage (capped at 1.0 to prevent overflow)
+        double healthPercentage = Math.min(currentHealth / maxHealth, 1.0);
+
+        // Apply the percentage to the fixed maximum width
         setWidth(barWidth * healthPercentage);
+
+        // Color coding based on health percentage
         if (healthPercentage > 0.6) {
             setFill(Color.GREEN);
         } else if (healthPercentage > 0.3) {
@@ -49,7 +54,6 @@ public class HealthBar extends RectangleEntity {
             setFill(Color.RED);
         }
     }
-
     private void updateHealthText() {
         healthText.setText("Health: " + (int) currentHealth);
     }
