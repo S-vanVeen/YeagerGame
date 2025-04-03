@@ -91,6 +91,12 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
         }
     }
 
+    public void increaseMaxHealth(int amount) {
+        health += amount;
+        healthBar.updateHealth(health);
+        System.out.println("Player health increased to: " + health);
+    }
+
     /**
      * Check if player is currently reloading
      * @return true if reloading, false otherwise

@@ -4,7 +4,7 @@ import org.example.ui.AmmoText;
 
 public class Ammunition {
     private int currentAmmo;
-    private final int maxAmmo;
+    private int maxAmmo;
     private AmmoText ammoText;
 
     public Ammunition(int startingAmmo, int maxAmmo) {
@@ -15,6 +15,12 @@ public class Ammunition {
     public void setAmmoText(AmmoText ammoText) {
         this.ammoText = ammoText;
         updateAmmoText();
+    }
+
+    public void increaseMaxAmmo(int amount) {
+        maxAmmo += amount;
+        updateAmmoText();
+        System.out.println("Ammo capacity increased to: " + maxAmmo);
     }
 
     public boolean useAmmo() {

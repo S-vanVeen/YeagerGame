@@ -18,6 +18,8 @@ import org.example.weapons.pistol.Bullet;
 import org.example.zombies.BaseZombie;
 import org.example.zombies.BigZombie.BigZombie;
 import org.example.zombies.NormalZombie.Zombie;
+import org.example.ui.PurchaseOption;
+import org.example.ui.PurchaseOption.PurchaseType;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -36,6 +38,11 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private static final int MAX_AMMO = 24;
     private static final int RELOAD_TIME_MS = 1000; // 2 seconds to reload
     private final Random random = new Random();
+    private PurchaseOption healthUpgradeOption;
+    private PurchaseOption ammoUpgradeOption;
+    private PurchaseOption ammoRefillOption;
+    private static final int HEALTH_UPGRADE_AMOUNT = 25;
+    private static final int AMMO_UPGRADE_AMOUNT = 24;
 
     private final Coordinate2D[] spawnPoints = {
             new Coordinate2D(100, 100),
@@ -161,6 +168,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
                 countdownActive = true;
                 countdownTimer.reset(ROUND_DELAY_SECONDS);
                 countdownTimer.setOpacity(1); // Show the countdown timer
+                showPurchaseOptions(); // Show purchase options when countdown starts
 
                 // Reload ammunition at the end of each round
                 ammunition.reload();
@@ -186,6 +194,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
 
                 if (countdownTimer.getSecondsLeft() <= 0) {
                     // Countdown finished, start the next round
+                    hidePurchaseOptions(); // Hide purchase options
                     startNextRound();
                     countdownActive = false;
                     countdownTimer.setOpacity(0); // Hide the countdown timer
@@ -220,6 +229,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         }
     }
 
+
     private void startNextRound() {
         roundText.verhoogRonde();
         roundText.setRoundText();
@@ -227,4 +237,76 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         spawnZombies();
         System.out.println("Round " + roundText.getRound() + " started with " + maxZombies + " zombies!");
     }
+    private void showPurchaseOptions() {
+        // Position on the right side of the screen
+        double rightSideX = getWidth() - 400; // 300 pixels from the right edge
+
+        // Create purchase options if they don't exist yet
+        if (healthUpgradeOption == null) {
+            healthUpgradeOption = new PurchaseOption(
+                    new Coordinate2D(rightSideX, 150),
+                    PurchaseType.HEALTH_UPGRADE,
+                    this::processPurchase
+            );
+            ammoUpgradeOption = new PurchaseOption(
+                    new Coordinate2D(rightSideX, 200),
+                    PurchaseType.AMMO_UPGRADE,
+                    this::processPurchase
+            );
+            ammoRefillOption = new PurchaseOption(
+                    new Coordinate2D(rightSideX, 250),
+                    PurchaseType.AMMO_REFILL,
+                    this::processPurchase
+            );
+        }
+
+        // Add entities to the scene
+        addEntity(healthUpgradeOption);
+        addEntity(ammoUpgradeOption);
+        addEntity(ammoRefillOption);
+    }
+
+    /**
+     * Hides purchase options
+     */
+    private void hidePurchaseOptions() {
+        if (healthUpgradeOption != null) {
+            healthUpgradeOption.remove();
+            ammoUpgradeOption.remove();
+            ammoRefillOption.remove();
+        }
+    }
+
+    /**
+     * Processes a purchase when a purchase option is clicked
+     */
+    private void processPurchase(PurchaseType type, int cost) {
+        // Check if player can afford the purchase
+        if (cash.getAmount() >= cost) {
+            cash.increase(-cost); // Deduct cost
+
+            switch (type) {
+                case HEALTH_UPGRADE:
+                    // Increase player's max health
+                    player.increaseMaxHealth(HEALTH_UPGRADE_AMOUNT);
+                    System.out.println("Health upgraded! +25 max health");
+                    break;
+
+                case AMMO_UPGRADE:
+                    // Increase max ammo capacity
+                    ammunition.increaseMaxAmmo(AMMO_UPGRADE_AMOUNT);
+                    System.out.println("Ammo capacity upgraded! +24 max ammo");
+                    break;
+
+                case AMMO_REFILL:
+                    // Refill ammo to max capacity
+                    ammunition.reload();
+                    System.out.println("Ammo refilled to maximum!");
+                    break;
+            }
+        } else {
+            System.out.println("Not enough cash! Need $" + cost);
+        }
+    }
+
 }
