@@ -33,7 +33,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private Ammunition ammunition;
     private final ArrayList<BaseZombie> zombies = new ArrayList<>();
     private int maxZombies = 10;
-    private int ROUND_DELAY_SECONDS = 30;
+    private int ROUND_DELAY_SECONDS = 10;
     private int STARTING_AMMO = 12;
     private int MAX_AMMO = 24;
     private int RELOAD_TIME_MS = 1000;
@@ -41,8 +41,8 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private PurchaseOption healthUpgradeOption;
     private PurchaseOption ammoUpgradeOption;
     private PurchaseOption ammoRefillOption;
-    private int HEALTH_UPGRADE_AMOUNT = 25;
-    private int AMMO_UPGRADE_AMOUNT = 24;
+    private int HEALTH_UPGRADE_AMOUNT = 10;
+    private int AMMO_UPGRADE_AMOUNT = 2;
     private final int MAX_ACTIVE_ZOMBIES = 50;
     private int zombiesToSpawn = 0;
     private boolean allZombiesSpawned = false;
@@ -327,23 +327,23 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
                     PurchaseType.AMMO_UPGRADE,
                     this::processPurchase
             );
-            ammoRefillOption = new PurchaseOption(
-                    new Coordinate2D(rightSideX, 250),
-                    PurchaseType.AMMO_REFILL,
-                    this::processPurchase
-            );
+//            ammoRefillOption = new PurchaseOption(
+//                    new Coordinate2D(rightSideX, 250),
+//                    PurchaseType.AMMO_REFILL,
+//                    this::processPurchase
+//            );
         }
 
         addEntity(healthUpgradeOption);
         addEntity(ammoUpgradeOption);
-        addEntity(ammoRefillOption);
+        //addEntity(ammoRefillOption);
     }
 
     private void hidePurchaseOptions() {
         if (healthUpgradeOption != null) {
             healthUpgradeOption.remove();
             ammoUpgradeOption.remove();
-            ammoRefillOption.remove();
+            //ammoRefillOption.remove();
         }
     }
 
@@ -362,10 +362,10 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
                     System.out.println("Ammo capacity upgraded! +24 max ammo");
                     break;
 
-                case AMMO_REFILL:
-                    ammunition.reload();
-                    System.out.println("Ammo refilled to maximum!");
-                    break;
+//                case AMMO_REFILL:
+//                    ammunition.reload();
+//                    System.out.println("Ammo refilled to maximum!");
+//                    break;
             }
         } else {
             System.out.println("Not enough cash! Need $" + cost);
