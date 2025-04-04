@@ -33,7 +33,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private Ammunition ammunition;
     private final ArrayList<BaseZombie> zombies = new ArrayList<>();
     private int maxZombies = 10;
-    private int ROUND_DELAY_SECONDS = 30;
+    private int ROUND_DELAY_SECONDS = 10;
     private int STARTING_AMMO = 12;
     private int MAX_AMMO = 24;
     private int RELOAD_TIME_MS = 1000;
@@ -64,6 +64,8 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
 
     @Override
     public void setupScene() {
+        setBackgroundAudioVolume(0.15);
+        setBackgroundAudio("audio/zombieGeluid.m4a");
         setBackgroundImage("images/achtergrond.jpg");
     }
 
@@ -190,8 +192,13 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
             }
         }
     }
+    private void playZombieSound() {
+        var shootSound = new com.github.hanyaeger.api.media.SoundClip("audio/zombieDood.wav");
+        shootSound.play();
+    }
 
     public void removeZombie(BaseZombie zombie) {
+        playZombieSound();
         zombies.remove(zombie);
 
         // When a zombie is removed and there are more to spawn, spawn a new one
@@ -336,14 +343,14 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
 
         addEntity(healthUpgradeOption);
         addEntity(ammoUpgradeOption);
-//        addEntity(ammoRefillOption);
+        //addEntity(ammoRefillOption);
     }
 
     private void hidePurchaseOptions() {
         if (healthUpgradeOption != null) {
             healthUpgradeOption.remove();
             ammoUpgradeOption.remove();
-//            ammoRefillOption.remove();
+            //ammoRefillOption.remove();
         }
     }
 
@@ -362,10 +369,10 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
                     System.out.println("Ammo capacity upgraded! +" + AMMO_UPGRADE_AMOUNT +" max ammo");
                     break;
 
-                case AMMO_REFILL:
-                    ammunition.reload();
-                    System.out.println("Ammo refilled to maximum!");
-                    break;
+//                case AMMO_REFILL:
+//                    ammunition.reload();
+//                    System.out.println("Ammo refilled to maximum!");
+//                    break;
             }
         } else {
             System.out.println("Not enough cash! Need $" + cost);

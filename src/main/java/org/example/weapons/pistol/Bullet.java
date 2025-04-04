@@ -17,6 +17,8 @@ public class Bullet extends DynamicSpriteEntity implements Collider, SceneBorder
 
         // Stel snelheid en richting in
         setMotion(5, angle); // Snelheid = 5, richting berekend
+
+        playSound();
     }
 
     private double calculateAngle(Coordinate2D start, Coordinate2D target) {
@@ -27,6 +29,10 @@ public class Bullet extends DynamicSpriteEntity implements Collider, SceneBorder
 
     }
 
+    private void playSound() {
+        var shootSound = new com.github.hanyaeger.api.media.SoundClip("audio/schietGeluid.wav");
+        shootSound.play();
+    }
 
     @Override
     public void notifyBoundaryTouching(SceneBorder sceneBorder) {
