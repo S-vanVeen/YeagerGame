@@ -1,0 +1,328 @@
+@startuml Survival Outbreak Game Class Diagram
+
+class YaegerGame #lightblue
+class DynamicSpriteEntity #lightblue
+class DynamicCompositeEntity #lightblue
+class RectangleEntity #lightblue
+class TextEntity #lightblue
+class Timer #lightblue
+class StaticScene #lightblue
+class DynamicScene #lightblue
+interface KeyListener #lightblue
+interface SceneBorderTouchingWatcher #lightblue
+interface SceneBorderCrossingWatcher #lightblue
+interface Collider #lightblue
+interface Collided #lightblue
+interface MouseButtonPressedListener #lightblue
+interface MouseEnterListener #lightblue
+interface MouseExitListener #lightblue
+interface TimerContainer #lightblue
+interface PurchaseHandler
+
+class SurvivalOutbreak extends YaegerGame {
+  +setupGame()
+  +setupScenes()
+  +setActiveScene(int sceneNumber)
+  +quit()
+  +main(String[] args)
+}
+
+interface PlayerLocation {
+  +getLocation(): Coordinate2D
+}
+
+class Player extends DynamicSpriteEntity implements KeyListener, SceneBorderTouchingWatcher, Collided, PlayerLocation {
+  -health: int
+  -round: int
+  -isReloading: boolean
+  -lastDirection: int
+  -survivalOutbreak: SurvivalOutbreak
+  -healthBar: HealthBar
+  -roundText: RoundText
+  -ammunition: Ammunition
+  +Player(location: Coordinate2D, healthBar: HealthBar, roundText: RoundText, survivalOutbreak: SurvivalOutbreak)
+  +setAmmunition(ammunition: Ammunition)
+  +startReloading(): boolean
+  +completeReload()
+  +increaseMaxHealth(amount: int)
+  +isReloading(): boolean
+  +getLocation(): Coordinate2D
+  +onPressedKeysChange(pressedKeys: Set<KeyCode>)
+  +notifyBoundaryTouching(border: SceneBorder)
+  +onCollision(colliders: List<Collider>)
+}
+
+abstract class BaseZombie extends DynamicCompositeEntity implements SceneBorderCrossingWatcher {
+  #player: PlayerLocation
+  #zombieSpeed: double
+  #gameScene: GameScene
+  #reward: int
+  #health: int
+  +BaseZombie(player: PlayerLocation, gameScene: GameScene, speed: double, reward: int, health: int)
+  +executeUpdates()
+  #moveDirectlyTowardsPlayer()
+  +notifyBoundaryCrossing(border: SceneBorder)
+  +getReward(): int
+  +takeDamage(damage: int)
+  #handleDeath()
+  #{abstract} setupEntities()
+}
+
+class Zombie extends BaseZombie {
+  -DEFAULT_SPEED: double = 1.0
+  -DEFAULT_REWARD: int = 50
+  -DEFAULT_HEALTH: int = 1
+  +Zombie(player: PlayerLocation, gameScene: GameScene)
+  +Zombie(player: PlayerLocation, gameScene: GameScene, speed: double, reward: int, health: int)
+  #setupEntities()
+}
+
+class BigZombie extends BaseZombie {
+  -DEFAULT_SPEED: double = 0.7
+  -DEFAULT_REWARD: int = 100
+  -DEFAULT_HEALTH: int = 3
+  +BigZombie(player: PlayerLocation, gameScene: GameScene)
+  +BigZombie(player: PlayerLocation, gameScene: GameScene, speed: double, reward: int, health: int)
+  #setupEntities()
+}
+
+class ZombieSprite extends DynamicSpriteEntity {
+  +ZombieSprite(location: Coordinate2D)
+}
+
+class BigZombieSprite extends DynamicSpriteEntity {
+  +BigZombieSprite(location: Coordinate2D)
+}
+
+abstract class BaseHitBox extends RectangleEntity implements Collider, Collided {
+  #zombie: BaseZombie
+  #gameScene: GameScene
+  #damageAmount: int
+  +BaseHitBox(initialPosition: Coordinate2D, zombie: BaseZombie, gameScene: GameScene, width: double, height: double, damageAmount: int)
+  +getDamageAmount(): int
+  +getZombieType(): String
+  +onCollision(colliders: List<Collider>)
+}
+
+class "HitBox (NormalZombie)" as HitBoxNormal extends BaseHitBox {
+  +HitBox(initialPosition: Coordinate2D, zombie: Zombie, gameScene: GameScene)
+}
+
+class "HitBox (BigZombie)" as HitBoxBig extends BaseHitBox {
+  +HitBox(initialPosition: Coordinate2D, zombie: BigZombie, gameScene: GameScene)
+}
+
+class Ammunition {
+  -currentAmmo: int
+  -maxAmmo: int
+  -ammoText: AmmoText
+  +Ammunition(startingAmmo: int, maxAmmo: int)
+  +setAmmoText(ammoText: AmmoText)
+  +increaseMaxAmmo(amount: int)
+  +useAmmo(): boolean
+  +reload(amount: int)
+  +reload()
+  +getCurrentAmmo(): int
+  +getMaxAmmo(): int
+}
+
+class Bullet extends DynamicSpriteEntity implements Collider, SceneBorderTouchingWatcher {
+  +Bullet(startLocation: Coordinate2D, targetLocation: Coordinate2D)
+  -calculateAngle(start: Coordinate2D, target: Coordinate2D): double
+  -playSound()
+  +notifyBoundaryTouching(sceneBorder: SceneBorder)
+}
+
+class GameScene extends DynamicScene implements TimerContainer, MouseButtonPressedListener {
+  -survivalOutbreak: SurvivalOutbreak
+  -roundText: RoundText
+  -countdownTimer: CountdownTimer
+  -player: Player
+  -cash: Cash
+  -ammunition: Ammunition
+  -zombies: ArrayList<BaseZombie>
+  -purchaseOptions: PurchaseOption
+  +GameScene(survivalOutbreak: SurvivalOutbreak)
+  +setupScene()
+  +setupEntities()
+  +setupTimers()
+  +onMouseButtonPressed(button: MouseButton, coordinate: Coordinate2D)
+  +removeZombie(zombie: BaseZombie)
+  +addCash(amount: int)
+  -processPurchase(type: PurchaseType, cost: int)
+  -spawnSingleZombie()
+  -prepareZombiesForRound()
+  -startNextRound()
+}
+
+class TitleScene extends StaticScene {
+  -survivalOutbreak: SurvivalOutbreak
+  +TitleScene(survivalOutbreak: SurvivalOutbreak)
+  +setupScene()
+  +setupEntities()
+}
+
+class EndScene extends StaticScene {
+  -survivalOutbreak: SurvivalOutbreak
+  +EndScene(survivalOutbreak: SurvivalOutbreak)
+  +setupScene()
+  +setupEntities()
+}
+
+class HealthBar extends RectangleEntity {
+  -healthText: TextEntity
+  -maxHealth: double
+  -currentHealth: double
+  -barWidth: double
+  +HealthBar(initialLocation: Coordinate2D, maxHealth: double, barWidth: double, barHeight: double)
+  +updateHealth(newHealth: double)
+  -updateHealthBar()
+  -updateHealthText()
+  +getHealthText(): TextEntity
+}
+
+class RoundText extends TextEntity {
+  -round: int
+  +RoundText(initialLocation: Coordinate2D)
+  +verhoogRonde()
+  +volgendeRondeTimer()
+  +setRoundText()
+  +getRound(): int
+}
+
+class AmmoText extends TextEntity {
+  +AmmoText(initialLocation: Coordinate2D)
+  +update(currentAmmo: int, maxAmmo: int)
+}
+
+class Cash {
+  -amount: int
+  -cashText: CashText
+  +Cash(location: Coordinate2D)
+  +increase(amount: int)
+  +getAmount(): int
+  -updateCashText()
+  +getCashText(): CashText
+}
+
+class "Cash.CashText" as CashText extends TextEntity {
+  +CashText(initialLocation: Coordinate2D)
+}
+
+class CountdownTimer extends TextEntity {
+  -secondsLeft: int
+  +CountdownTimer(initialLocation: Coordinate2D, totalSeconds: int)
+  +tick()
+  +getSecondsLeft(): int
+  +reset(seconds: int)
+  -updateText()
+}
+
+class PurchaseOption extends TextEntity implements MouseButtonPressedListener {
+  -purchaseType: PurchaseType
+  -purchaseHandler: PurchaseHandler
+  +PurchaseOption(location: Coordinate2D, purchaseType: PurchaseType, purchaseHandler: PurchaseHandler)
+  +onMouseButtonPressed(mouseButton: MouseButton, coordinate: Coordinate2D)
+}
+
+enum PurchaseType {
+  HEALTH_UPGRADE("Buy Health Upgrade ($250): +10 Health", 250)
+  AMMO_UPGRADE("Buy Ammo Upgrade ($200): +2 Max Ammo", 200)
+  +getDisplayText(): String
+  +getCost(): int
+}
+
+class ZombieUpdater extends Timer {
+  +ZombieUpdater(intervalInMs: long)
+  +onAnimationUpdate(timestamp: long)
+}
+
+class ZombieSpawner extends Timer {
+  +ZombieSpawner(intervalInMs: long)
+  +onAnimationUpdate(timestamp: long)
+}
+
+class RoundManager extends Timer {
+  +RoundManager(intervalInMs: long)
+  +onAnimationUpdate(timestamp: long)
+}
+
+class ReloadTimer extends Timer {
+  -reloadDuration: int
+  -reloadProgress: int
+  +ReloadTimer(intervalInMs: long)
+  +onAnimationUpdate(timestamp: long)
+}
+
+class StartButton extends TextEntity implements MouseButtonPressedListener, MouseEnterListener, MouseExitListener {
+  -survivalOutbreak: SurvivalOutbreak
+  +StartButton(survivalOutbreak: SurvivalOutbreak, initialLocation: Coordinate2D)
+  +onMouseButtonPressed(mouseButton: MouseButton, coordinate: Coordinate2D)
+  +onMouseEntered()
+  +onMouseExited()
+}
+
+class PlayAgainButton extends TextEntity implements MouseButtonPressedListener, MouseEnterListener, MouseExitListener {
+  -survivalOutbreak: SurvivalOutbreak
+  +PlayAgainButton(survivalOutbreak: SurvivalOutbreak, initialLocation: Coordinate2D)
+  +onMouseButtonPressed(mouseButton: MouseButton, coordinate: Coordinate2D)
+  +onMouseEntered()
+  +onMouseExited()
+}
+
+class QuitButton extends TextEntity implements MouseButtonPressedListener, MouseEnterListener, MouseExitListener {
+  -survivalOutbreak: SurvivalOutbreak
+  +QuitButton(survivalOutbreak: SurvivalOutbreak, initialLocation: Coordinate2D)
+  +onMouseButtonPressed(mouseButton: MouseButton, coordinate: Coordinate2D)
+  +onMouseEntered()
+  +onMouseExited()
+}
+
+class ResumeButton extends TextEntity implements MouseButtonPressedListener, MouseEnterListener, MouseExitListener {
+  -survivalOutbreak: SurvivalOutbreak
+  +ResumeButton(survivalOutbreak: SurvivalOutbreak, initialLocation: Coordinate2D)
+  +onMouseButtonPressed(mouseButton: MouseButton, coordinate: Coordinate2D)
+  +onMouseEntered()
+  +onMouseExited()
+}
+
+Player --> SurvivalOutbreak
+Player --> HealthBar
+Player --> RoundText
+Player o-- Ammunition
+Ammunition --> AmmoText
+
+BaseZombie --> PlayerLocation
+BaseZombie --> GameScene
+BaseHitBox --> BaseZombie
+BaseHitBox --> GameScene
+
+SurvivalOutbreak o-- TitleScene
+SurvivalOutbreak o-- GameScene
+SurvivalOutbreak o-- EndScene
+
+Zombie *-- ZombieSprite
+Zombie *-- HitBoxNormal
+BigZombie *-- BigZombieSprite
+BigZombie *-- HitBoxBig
+
+GameScene o-- Player
+GameScene o-- Cash
+GameScene o-- Ammunition
+GameScene o-- RoundText
+GameScene o-- CountdownTimer
+GameScene o-- PurchaseOption
+GameScene *-- ZombieUpdater
+GameScene *-- ZombieSpawner
+GameScene *-- RoundManager
+GameScene *-- ReloadTimer
+
+Cash *-- CashText
+
+TitleScene -- StartButton
+EndScene -- PlayAgainButton
+EndScene -- QuitButton
+
+PurchaseOption -- PurchaseType
+
+@enduml
