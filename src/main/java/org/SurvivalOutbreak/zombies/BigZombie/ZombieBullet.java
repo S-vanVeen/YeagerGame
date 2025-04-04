@@ -12,7 +12,6 @@ import org.SurvivalOutbreak.Player;
 import java.util.List;
 
 public class ZombieBullet extends DynamicSpriteEntity implements Collider, SceneBorderTouchingWatcher, Collided {
-    //private final int BULLET_DAMAGE = 15;
 
     public ZombieBullet(Coordinate2D startLocation, Coordinate2D targetLocation) {
         super("sprites/bullet.png", startLocation, new Size(10, 10));
@@ -44,10 +43,7 @@ public class ZombieBullet extends DynamicSpriteEntity implements Collider, Scene
     public void onCollision(List<Collider> colliders) {
         for (Collider collider : colliders) {
             if (collider instanceof Player) {
-                Player player = (Player) collider;
                 System.out.println("Zombie bullet hit player!");
-                //werkt niet geen tijd meer
-                this.remove();
             }
         }
     }
