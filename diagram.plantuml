@@ -1,6 +1,5 @@
 @startuml Survival Outbreak Game Class Diagram
 
-' Externe klassen (voor zichtbaarheid)
 class YaegerGame #lightblue
 class DynamicSpriteEntity #lightblue
 class DynamicCompositeEntity #lightblue
@@ -20,7 +19,6 @@ interface MouseExitListener #lightblue
 interface TimerContainer #lightblue
 interface PurchaseHandler
 
-' Main Application
 class SurvivalOutbreak extends YaegerGame {
   +setupGame()
   +setupScenes()
@@ -29,12 +27,10 @@ class SurvivalOutbreak extends YaegerGame {
   +main(String[] args)
 }
 
-' Interface
 interface PlayerLocation {
   +getLocation(): Coordinate2D
 }
 
-' Player Class
 class Player extends DynamicSpriteEntity implements KeyListener, SceneBorderTouchingWatcher, Collided, PlayerLocation {
   -health: int
   -round: int
@@ -56,7 +52,6 @@ class Player extends DynamicSpriteEntity implements KeyListener, SceneBorderTouc
   +onCollision(colliders: List<Collider>)
 }
 
-' Zombie Classes
 abstract class BaseZombie extends DynamicCompositeEntity implements SceneBorderCrossingWatcher {
   #player: PlayerLocation
   #zombieSpeed: double
@@ -91,7 +86,6 @@ class BigZombie extends BaseZombie {
   #setupEntities()
 }
 
-' Sprite classes
 class ZombieSprite extends DynamicSpriteEntity {
   +ZombieSprite(location: Coordinate2D)
 }
@@ -100,7 +94,6 @@ class BigZombieSprite extends DynamicSpriteEntity {
   +BigZombieSprite(location: Coordinate2D)
 }
 
-' HitBox Classes
 abstract class BaseHitBox extends RectangleEntity implements Collider, Collided {
   #zombie: BaseZombie
   #gameScene: GameScene
@@ -119,7 +112,6 @@ class "HitBox (BigZombie)" as HitBoxBig extends BaseHitBox {
   +HitBox(initialPosition: Coordinate2D, zombie: BigZombie, gameScene: GameScene)
 }
 
-' Weapons
 class Ammunition {
   -currentAmmo: int
   -maxAmmo: int
@@ -141,7 +133,6 @@ class Bullet extends DynamicSpriteEntity implements Collider, SceneBorderTouchin
   +notifyBoundaryTouching(sceneBorder: SceneBorder)
 }
 
-' Scene Classes
 class GameScene extends DynamicScene implements TimerContainer, MouseButtonPressedListener {
   -survivalOutbreak: SurvivalOutbreak
   -roundText: RoundText
@@ -178,7 +169,6 @@ class EndScene extends StaticScene {
   +setupEntities()
 }
 
-' UI Classes
 class HealthBar extends RectangleEntity {
   -healthText: TextEntity
   -maxHealth: double
@@ -242,7 +232,6 @@ enum PurchaseType {
   +getCost(): int
 }
 
-' Timers
 class ZombieUpdater extends Timer {
   +ZombieUpdater(intervalInMs: long)
   +onAnimationUpdate(timestamp: long)
@@ -265,7 +254,6 @@ class ReloadTimer extends Timer {
   +onAnimationUpdate(timestamp: long)
 }
 
-' Button Classes
 class StartButton extends TextEntity implements MouseButtonPressedListener, MouseEnterListener, MouseExitListener {
   -survivalOutbreak: SurvivalOutbreak
   +StartButton(survivalOutbreak: SurvivalOutbreak, initialLocation: Coordinate2D)
@@ -298,7 +286,6 @@ class ResumeButton extends TextEntity implements MouseButtonPressedListener, Mou
   +onMouseExited()
 }
 
-' Associaties
 Player --> SurvivalOutbreak
 Player --> HealthBar
 Player --> RoundText
