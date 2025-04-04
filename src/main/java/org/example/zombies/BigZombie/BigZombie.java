@@ -15,6 +15,15 @@ public class BigZombie extends BaseZombie {
         System.out.println("BigZombie created at (0, 0)");
     }
 
+    // Add a new constructor that accepts custom attribute values
+    public BigZombie(PlayerLocation player, GameScene gameScene, double speed, int reward, int health) {
+        super(player, gameScene, speed, reward, health);
+        System.out.println("BigZombie created at (0, 0) with stats - Speed: " +
+                String.format("%.2f", speed) +
+                ", Reward: " + reward +
+                ", Health: " + health);
+    }
+
     @Override
     protected void setupEntities() {
         var zombieSprite = new BigZombieSprite(new Coordinate2D(0, 0));

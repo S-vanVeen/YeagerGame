@@ -46,6 +46,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private final int MAX_ACTIVE_ZOMBIES = 50;
     private int zombiesToSpawn = 0;
     private boolean allZombiesSpawned = false;
+    private final double ZOMBIE_ATTRIBUTE_SCALING_FACTOR = 1.05;
 
 
     private final Coordinate2D[] spawnPoints = {
@@ -115,6 +116,12 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         }
     }
 
+    private double getZombieScalingFactor() {
+        // Start with base values in round 1, then scale up by 1.1 each round
+        int currentRound = roundText.getRound();
+        return Math.pow(ZOMBIE_ATTRIBUTE_SCALING_FACTOR, currentRound - 1);
+    }
+
     private void spawnSingleZombie() {
         if (zombies.size() >= MAX_ACTIVE_ZOMBIES) {
             return; // Do not spawn if we're at max capacity
@@ -130,12 +137,25 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         double offsetY = random.nextDouble() * 100 - 50; // -50 to +50
         spawnPoint = new Coordinate2D(spawnPoint.getX() + offsetX, spawnPoint.getY() + offsetY);
 
-        // Create zombie based on probability
+        // Calculate scaling factor for this round
+        double scalingFactor = getZombieScalingFactor();
+
+        // Create zombie based on probability with scaled attributes
         BaseZombie zombie;
         if (random.nextDouble() < 0.2) { // 20% chance for BigZombie
-            zombie = new BigZombie(player, this);
+            // Scale BigZombie attributes
+            double scaledSpeed = 0.7 * scalingFactor;  // DEFAULT_SPEED
+            int scaledReward = (int)(100 * scalingFactor); // DEFAULT_REWARD
+            int scaledHealth = (int)Math.ceil(3 * scalingFactor); // DEFAULT_HEALTH
+
+            zombie = new BigZombie(player, this, scaledSpeed, scaledReward, scaledHealth);
         } else {
-            zombie = new Zombie(player, this);
+            // Scale normal Zombie attributes
+            double scaledSpeed = 1.0 * scalingFactor; // DEFAULT_SPEED
+            int scaledReward = (int)(50 * scalingFactor); // DEFAULT_REWARD
+            int scaledHealth = (int)Math.ceil(1 * scalingFactor); // DEFAULT_HEALTH
+
+            zombie = new Zombie(player, this, scaledSpeed, scaledReward, scaledHealth);
         }
 
         zombie.setAnchorLocation(spawnPoint);
@@ -283,9 +303,16 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         roundText.verhoogRonde();
         roundText.setRoundText();
         maxZombies = (int) (maxZombies * 1.5);
+
+        double scalingFactor = getZombieScalingFactor();
+        System.out.println("Round " + roundText.getRound() +
+                " started with " + maxZombies +
+                " zombies! Zombie attributes scaled by factor: " +
+                String.format("%.2f", scalingFactor));
+
         prepareZombiesForRound();
-        System.out.println("Round " + roundText.getRound() + " started with " + maxZombies + " zombies!");
     }
+
     private void showPurchaseOptions() {
         double rightSideX = getWidth() - 400;
 
