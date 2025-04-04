@@ -33,16 +33,17 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private Ammunition ammunition;
     private final ArrayList<BaseZombie> zombies = new ArrayList<>();
     private int maxZombies = 10;
-    private int ROUND_DELAY_SECONDS = 30;
+    private int ROUND_DELAY_SECONDS = 10;
     private int STARTING_AMMO = 12;
     private int MAX_AMMO = 24;
     private int RELOAD_TIME_MS = 1000;
     private final Random random = new Random();
     private PurchaseOption healthUpgradeOption;
     private PurchaseOption ammoUpgradeOption;
-    private PurchaseOption ammoRefillOption;
-    private int HEALTH_UPGRADE_AMOUNT = 25;
-    private int AMMO_UPGRADE_AMOUNT = 24;
+    //private PurchaseOption ammoRefillOption;
+    private int HEALTH_UPGRADE_AMOUNT = 10;
+    private int AMMO_UPGRADE_AMOUNT = 2;
+    private final double ZOMBIE_ATTRIBUTE_SCALING_FACTOR = 1.1;
 
     private final Coordinate2D[] spawnPoints = {
             new Coordinate2D(100, 100),
@@ -93,18 +94,34 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         spawnZombies();
     }
 
+    private double getZombieScalingFactor() {
+        return Math.pow(ZOMBIE_ATTRIBUTE_SCALING_FACTOR, roundText.getRound() - 1);
+    }
+
     private void spawnZombies() {
         zombies.clear();
+        double scalingFactor = getZombieScalingFactor();
+
         for (int i = 0; i < maxZombies; i++) {
             Coordinate2D spawnPoint = (i < spawnPoints.length) ?
                     spawnPoints[i] :
                     new Coordinate2D(Math.random() * getWidth(), Math.random() * getHeight());
 
             BaseZombie zombie;
-            if (random.nextDouble() < 0.2) { //kans voor bigzombie
-                zombie = new BigZombie(player, this);
+            if (random.nextDouble() < 0.2) { // chance for BigZombie
+                // Apply scaling to BigZombie attributes
+                double scaledSpeed = 0.7 * scalingFactor;  // DEFAULT_SPEED from BigZombie
+                int scaledReward = (int)(100 * scalingFactor); // DEFAULT_REWARD from BigZombie
+                int scaledHealth = (int)Math.ceil(3 * scalingFactor); // DEFAULT_HEALTH from BigZombie
+
+                zombie = new BigZombie(player, this, scaledSpeed, scaledReward, scaledHealth);
             } else {
-                zombie = new Zombie(player, this);
+                // Apply scaling to normal Zombie attributes
+                double scaledSpeed = 1.0 * scalingFactor; // DEFAULT_SPEED from Zombie
+                int scaledReward = (int)(50 * scalingFactor); // DEFAULT_REWARD from Zombie
+                int scaledHealth = (int)Math.ceil(1 * scalingFactor); // DEFAULT_HEALTH from Zombie
+
+                zombie = new Zombie(player, this, scaledSpeed, scaledReward, scaledHealth);
             }
 
             zombie.setAnchorLocation(spawnPoint);
@@ -240,23 +257,23 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
                     PurchaseType.AMMO_UPGRADE,
                     this::processPurchase
             );
-            ammoRefillOption = new PurchaseOption(
-                    new Coordinate2D(rightSideX, 250),
-                    PurchaseType.AMMO_REFILL,
-                    this::processPurchase
-            );
+//            ammoRefillOption = new PurchaseOption(
+//                    new Coordinate2D(rightSideX, 250),
+//                    PurchaseType.AMMO_REFILL,
+//                    this::processPurchase
+//            );
         }
 
         addEntity(healthUpgradeOption);
         addEntity(ammoUpgradeOption);
-        addEntity(ammoRefillOption);
+        //addEntity(ammoRefillOption);
     }
 
     private void hidePurchaseOptions() {
         if (healthUpgradeOption != null) {
             healthUpgradeOption.remove();
             ammoUpgradeOption.remove();
-            ammoRefillOption.remove();
+            //ammoRefillOption.remove();
         }
     }
 
@@ -275,10 +292,10 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
                     System.out.println("Ammo capacity upgraded! +24 max ammo");
                     break;
 
-                case AMMO_REFILL:
-                    ammunition.reload();
-                    System.out.println("Ammo refilled to maximum!");
-                    break;
+//                case AMMO_REFILL:
+//                    ammunition.reload();
+//                    System.out.println("Ammo refilled to maximum!");
+//                    break;
             }
         } else {
             System.out.println("Not enough cash! Need $" + cost);
