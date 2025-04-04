@@ -57,7 +57,6 @@ public abstract class BaseZombie extends DynamicCompositeEntity implements Scene
 
     protected abstract boolean attackMethod();
 
-    // Get distance to player
     protected double getDistanceToPlayer() {
         Coordinate2D playerPos = player.getLocation();
         Coordinate2D zombiePos = getLocationInScene();
@@ -73,10 +72,6 @@ public abstract class BaseZombie extends DynamicCompositeEntity implements Scene
         System.out.println(getClass().getSimpleName() + " crossed border, resetting to (0, 0)");
     }
 
-    public int getReward() {
-        return reward;
-    }
-
     public void takeDamage(int damage) {
         health -= damage;
         if (health <= 0) {
@@ -88,12 +83,5 @@ public abstract class BaseZombie extends DynamicCompositeEntity implements Scene
         remove();
         gameScene.removeZombie(this);
         gameScene.addCash(reward);
-    }
-
-    // For zombies that can shoot
-    protected Coordinate2D getDirectionToPlayer() {
-        Coordinate2D playerPos = player.getLocation();
-        Coordinate2D zombiePos = getLocationInScene();
-        return new Coordinate2D(playerPos.getX(), playerPos.getY());
     }
 }

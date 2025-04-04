@@ -6,7 +6,7 @@ import org.SurvivalOutbreak.scenes.GameScene;
 import org.SurvivalOutbreak.zombies.BaseZombie;
 
 public class Zombie extends BaseZombie {
-    private final double ATTACK_RANGE = 15.0;
+    private final double ATTACK_RANGE = 5.0;
 
     public Zombie(PlayerLocation player, GameScene gameScene, double speed, int reward, int health) {
         super(player, gameScene, speed, reward, health);
