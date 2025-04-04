@@ -21,11 +21,11 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
 
     private SurvivalOutbreak survivalOutbreak;
     private HealthBar healthBar;
-    private RoundText roundText;//?
+    private RoundText roundText;
     private Ammunition ammunition;
     private boolean isReloading = false;
     private int health = 100;
-    private int round = 1;//?
+    private int round = 1;
     private final boolean ENABLE_LOCATION_LOGGING = false; //Kan later weg
     private final int SPRITE_ROW_UP = 0;
     private final int SPRITE_ROW_DOWN = 1;
@@ -120,8 +120,8 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
                 setAutoCycle(125, SPRITE_ROW_RIGHT);
                 lastDirection = SPRITE_ROW_RIGHT;
                 moved = true;
-            } else if (pressedKeys.contains(KeyCode.ESCAPE)) {
-                survivalOutbreak.setActiveScene(2);
+//            } else if (pressedKeys.contains(KeyCode.ESCAPE)) {
+//                survivalOutbreak.setActiveScene(2);
             } else if (pressedKeys.isEmpty()) {
                 setSpeed(0);
                 setAutoCycle(0);
