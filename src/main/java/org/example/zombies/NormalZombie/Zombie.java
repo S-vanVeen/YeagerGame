@@ -6,13 +6,13 @@ import org.example.scenes.GameScene;
 import org.example.zombies.BaseZombie;
 
 public class Zombie extends BaseZombie {
-//    private static final double DEFAULT_SPEED = 1.0;
-//    private static final int DEFAULT_REWARD = 50;
-//    private static final int DEFAULT_HEALTH = 1;
+    private static final double DEFAULT_SPEED = 1.0;
+    private static final int DEFAULT_REWARD = 50;
+    private static final int DEFAULT_HEALTH = 1;
 
-    public Zombie(PlayerLocation player, GameScene gameScene, double speed, int reward, int health) {
-        super(player, gameScene, speed, reward, health);
-        System.out.println("Zombie created at (0, 0) with stats - Speed: " + speed + ", Reward: " + reward + ", Health: " + health);
+    public Zombie(PlayerLocation player, GameScene gameScene) {
+        super(player, gameScene, DEFAULT_SPEED, DEFAULT_REWARD, DEFAULT_HEALTH);
+        System.out.println("Zombie created at (0, 0)");
     }
 
     @Override

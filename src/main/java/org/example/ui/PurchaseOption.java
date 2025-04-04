@@ -13,9 +13,9 @@ public class PurchaseOption extends TextEntity implements MouseButtonPressedList
     private final PurchaseHandler purchaseHandler;
 
     public enum PurchaseType {
-        HEALTH_UPGRADE("Buy Health Upgrade ($250): +10 Health", 250),
-        AMMO_UPGRADE("Buy Ammo Upgrade ($200): +2 Max Ammo", 200);
-        //AMMO_REFILL("Buy Ammo ($25): Refill to Max", 25);
+        HEALTH_UPGRADE("Buy Health Upgrade ($50): +25 Health", 50),
+        AMMO_UPGRADE("Buy Ammo Upgrade ($75): +24 Max Ammo", 75),
+        AMMO_REFILL("Buy Ammo ($25): Refill to Max", 25);
 
         private final String displayText;
         private final int cost;

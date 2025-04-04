@@ -21,7 +21,6 @@ public class Cash {
         updateCashText();
     }
 
-
     public int getAmount() {
         return amount;
     }
