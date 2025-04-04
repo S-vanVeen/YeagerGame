@@ -40,7 +40,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private final Random random = new Random();
     private PurchaseOption healthUpgradeOption;
     private PurchaseOption ammoUpgradeOption;
-    private PurchaseOption ammoRefillOption;
+    //private PurchaseOption ammoRefillOption;
     private int HEALTH_UPGRADE_AMOUNT = 10;
     private int AMMO_UPGRADE_AMOUNT = 2;
     private final int MAX_ACTIVE_ZOMBIES = 50;
@@ -64,9 +64,9 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
 
     @Override
     public void setupScene() {
-        setBackgroundImage("images/startscreen_bg.jpg");
         setBackgroundAudioVolume(0.15);
         setBackgroundAudio("audio/zombieGeluid.m4a");
+        setBackgroundImage("images/achtergrond.jpg");
     }
 
     @Override
@@ -361,12 +361,12 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
             switch (type) {
                 case HEALTH_UPGRADE:
                     player.increaseMaxHealth(HEALTH_UPGRADE_AMOUNT);
-                    System.out.println("Health upgraded! +25 max health");
+                    System.out.println("Health upgraded! +" + HEALTH_UPGRADE_AMOUNT + " max health");
                     break;
 
                 case AMMO_UPGRADE:
                     ammunition.increaseMaxAmmo(AMMO_UPGRADE_AMOUNT);
-                    System.out.println("Ammo capacity upgraded! +24 max ammo");
+                    System.out.println("Ammo capacity upgraded! +" + AMMO_UPGRADE_AMOUNT +" max ammo");
                     break;
 
 //                case AMMO_REFILL:
