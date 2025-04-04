@@ -13,6 +13,8 @@ import org.SurvivalOutbreak.ui.HealthBar;
 import org.SurvivalOutbreak.ui.RoundText;
 import org.SurvivalOutbreak.weapons.Ammunition;
 import org.SurvivalOutbreak.zombies.BaseHitBox;
+import org.SurvivalOutbreak.zombies.BigZombie.ZombieBullet;
+
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -71,6 +73,19 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
             // Return to normal stance
             setCurrentFrameIndex(lastDirection * 4);
             System.out.println("Reload complete!");
+        }
+    }
+
+    public void takeDamage(int damage) {
+        health -= damage;
+
+        // Show damage in console for debugging
+        System.out.println("Player took " + damage + " damage from zombie attack. Remaining health: " + health);
+
+        healthBar.updateHealth(health);
+
+        if (health <= 0) {
+            survivalOutbreak.setActiveScene(3);
         }
     }
 
@@ -194,23 +209,15 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
 
                 // Use the zombie's specific damage amount
                 int damage = hitBox.getDamageAmount();
-                health -= damage;
-
-                // Show damage in console for debugging
-                System.out.println("Player took " + damage + " damage from " +
-                        hitBox.getZombieType() +
-                        ". Remaining health: " + health);
-
-                healthBar.updateHealth(health);
-
-                if (health <= 0) {
-                    survivalOutbreak.setActiveScene(3);
-                }
+                takeDamage(damage);
 
                 // Kan weg later
                 if (ENABLE_LOCATION_LOGGING) {
                     logLocation("collision");
                 }
+            } else if (collider instanceof ZombieBullet) {
+                takeDamage(1);
+                System.out.println("Player detected collision with zombie bullet");
             }
         }
     }

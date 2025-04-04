@@ -6,18 +6,11 @@ import org.SurvivalOutbreak.scenes.GameScene;
 import org.SurvivalOutbreak.zombies.BaseZombie;
 
 public class Zombie extends BaseZombie {
-    private static final double DEFAULT_SPEED = 1.0;
-    private static final int DEFAULT_REWARD = 50;
-    private static final int DEFAULT_HEALTH = 1;
+    private final double ATTACK_RANGE = 15.0;
 
-    public Zombie(PlayerLocation player, GameScene gameScene) {
-        super(player, gameScene, DEFAULT_SPEED, DEFAULT_REWARD, DEFAULT_HEALTH);
-        System.out.println("Zombie created at (0, 0)");
-    }
-
-    // Add a new constructor that accepts custom attribute values
     public Zombie(PlayerLocation player, GameScene gameScene, double speed, int reward, int health) {
         super(player, gameScene, speed, reward, health);
+        this.attackCooldown = 1500;
         System.out.println("Zombie created at (0, 0) with stats - Speed: " +
                 String.format("%.2f", speed) +
                 ", Reward: " + reward +
@@ -31,5 +24,19 @@ public class Zombie extends BaseZombie {
 
         var hitBox = new HitBox(new Coordinate2D(0, 0), this, gameScene);
         addEntity(hitBox);
+    }
+
+    @Override
+    protected boolean attackMethod() {
+
+        double distance = getDistanceToPlayer();
+
+        if (distance <= ATTACK_RANGE) {
+            System.out.println("Zombie attempting to attack player at distance: " +
+                    String.format("%.2f", distance));
+            return true;
+        }
+
+        return false;
     }
 }
