@@ -13,9 +13,10 @@ public abstract class BaseZombie extends DynamicCompositeEntity implements Scene
     protected final GameScene gameScene;
     protected int reward;
     protected int health;
+    protected long lastAttackTime = 0;
+    protected long attackCooldown = 2000;
 
     public BaseZombie(PlayerLocation player, GameScene gameScene, double speed, int reward, int health) {
-        // Always start at position (0, 0)
         super(new Coordinate2D(0, 0));
         this.player = player;
         this.gameScene = gameScene;
@@ -29,6 +30,11 @@ public abstract class BaseZombie extends DynamicCompositeEntity implements Scene
 
     public void executeUpdates() {
         moveDirectlyTowardsPlayer();
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastAttackTime > attackCooldown) {
+            attackMethod();
+            lastAttackTime = currentTime;
+        }
     }
 
     protected void moveDirectlyTowardsPlayer() {
@@ -49,12 +55,24 @@ public abstract class BaseZombie extends DynamicCompositeEntity implements Scene
         }
     }
 
+    protected abstract boolean attackMethod();
+
+    // Get distance to player
+    protected double getDistanceToPlayer() {
+        Coordinate2D playerPos = player.getLocation();
+        Coordinate2D zombiePos = getLocationInScene();
+
+        double deltaX = playerPos.getX() - zombiePos.getX();
+        double deltaY = playerPos.getY() - zombiePos.getY();
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    }
+
     @Override
     public void notifyBoundaryCrossing(SceneBorder border) {
         setAnchorLocation(new Coordinate2D(0, 0));
         System.out.println(getClass().getSimpleName() + " crossed border, resetting to (0, 0)");
     }
-    //Wordt niet gebruikt?
+
     public int getReward() {
         return reward;
     }
@@ -70,5 +88,12 @@ public abstract class BaseZombie extends DynamicCompositeEntity implements Scene
         remove();
         gameScene.removeZombie(this);
         gameScene.addCash(reward);
+    }
+
+    // For zombies that can shoot
+    protected Coordinate2D getDirectionToPlayer() {
+        Coordinate2D playerPos = player.getLocation();
+        Coordinate2D zombiePos = getLocationInScene();
+        return new Coordinate2D(playerPos.getX(), playerPos.getY());
     }
 }

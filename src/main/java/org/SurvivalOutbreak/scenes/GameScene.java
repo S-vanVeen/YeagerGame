@@ -1,6 +1,7 @@
 package org.SurvivalOutbreak.scenes;
 
 import com.github.hanyaeger.api.Coordinate2D;
+import com.github.hanyaeger.api.entities.YaegerEntity;
 import com.github.hanyaeger.api.scenes.DynamicScene;
 import com.github.hanyaeger.api.TimerContainer;
 import com.github.hanyaeger.api.Timer;
@@ -186,6 +187,10 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private void playZombieSound() {
         var shootSound = new com.github.hanyaeger.api.media.SoundClip("audio/zombieDood.wav");
         shootSound.play();
+    }
+
+    public void addEntityToScene(YaegerEntity entity) {
+        addEntity(entity);
     }
 
     public void removeZombie(BaseZombie zombie) {
