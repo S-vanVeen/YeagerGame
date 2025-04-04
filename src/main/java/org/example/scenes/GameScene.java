@@ -40,9 +40,9 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private final Random random = new Random();
     private PurchaseOption healthUpgradeOption;
     private PurchaseOption ammoUpgradeOption;
-    private PurchaseOption ammoRefillOption;
-    private int HEALTH_UPGRADE_AMOUNT = 25;
-    private int AMMO_UPGRADE_AMOUNT = 24;
+    //private PurchaseOption ammoRefillOption;
+    private int HEALTH_UPGRADE_AMOUNT = 10;
+    private int AMMO_UPGRADE_AMOUNT = 2;
     private final int MAX_ACTIVE_ZOMBIES = 50;
     private int zombiesToSpawn = 0;
     private boolean allZombiesSpawned = false;
@@ -64,7 +64,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
 
     @Override
     public void setupScene() {
-        setBackgroundImage("images/startscreen_bg.jpg");
+        setBackgroundImage("images/achtergrond.jpg");
     }
 
     @Override
@@ -327,23 +327,23 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
                     PurchaseType.AMMO_UPGRADE,
                     this::processPurchase
             );
-            ammoRefillOption = new PurchaseOption(
-                    new Coordinate2D(rightSideX, 250),
-                    PurchaseType.AMMO_REFILL,
-                    this::processPurchase
-            );
+//            ammoRefillOption = new PurchaseOption(
+//                    new Coordinate2D(rightSideX, 250),
+//                    PurchaseType.AMMO_REFILL,
+//                    this::processPurchase
+//            );
         }
 
         addEntity(healthUpgradeOption);
         addEntity(ammoUpgradeOption);
-        addEntity(ammoRefillOption);
+//        addEntity(ammoRefillOption);
     }
 
     private void hidePurchaseOptions() {
         if (healthUpgradeOption != null) {
             healthUpgradeOption.remove();
             ammoUpgradeOption.remove();
-            ammoRefillOption.remove();
+//            ammoRefillOption.remove();
         }
     }
 
@@ -354,12 +354,12 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
             switch (type) {
                 case HEALTH_UPGRADE:
                     player.increaseMaxHealth(HEALTH_UPGRADE_AMOUNT);
-                    System.out.println("Health upgraded! +25 max health");
+                    System.out.println("Health upgraded! +" + HEALTH_UPGRADE_AMOUNT + " max health");
                     break;
 
                 case AMMO_UPGRADE:
                     ammunition.increaseMaxAmmo(AMMO_UPGRADE_AMOUNT);
-                    System.out.println("Ammo capacity upgraded! +24 max ammo");
+                    System.out.println("Ammo capacity upgraded! +" + AMMO_UPGRADE_AMOUNT +" max ammo");
                     break;
 
                 case AMMO_REFILL:
