@@ -1,0 +1,97 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class AmmoText {
+  + AmmoText(): 
+}
+class EndScene {
+  + EndScene(SurvivalOutbreak): 
+  + setupEntities(): void
+  + setupScene(): void
+}
+class GameScene {
+  + GameScene(SurvivalOutbreak): 
+  + setupEntities(): void
+  + setupScene(): void
+}
+class HealthText {
+  + HealthText(Coordinate2D): 
+   healthText: int
+}
+class HitBox {
+  + HitBox(): 
+}
+class HitBox {
+  # HitBox(Coordinate2D): 
+}
+class PauseScene {
+  + PauseScene(SurvivalOutbreak): 
+  + setupScene(): void
+  + setupEntities(): void
+}
+class PlayAgainButton {
+  + PlayAgainButton(SurvivalOutbreak, Coordinate2D): 
+  + onMouseButtonPressed(MouseButton, Coordinate2D): void
+  + onMouseExited(): void
+  + onMouseEntered(): void
+}
+class Player {
+  + Player(Coordinate2D, HealthText, SurvivalOutbreak): 
+  + onPressedKeysChange(Set<KeyCode>): void
+  + notifyBoundaryTouching(SceneBorder): void
+  + onCollision(List<Collider>): void
+}
+class QuitButton {
+  + QuitButton(SurvivalOutbreak, Coordinate2D): 
+  + onMouseEntered(): void
+  + onMouseButtonPressed(MouseButton, Coordinate2D): void
+  + onMouseExited(): void
+}
+class ResumeButton {
+  + ResumeButton(SurvivalOutbreak, Coordinate2D): 
+  + onMouseExited(): void
+  + onMouseButtonPressed(MouseButton, Coordinate2D): void
+  + onMouseEntered(): void
+}
+class RoundText {
+  + RoundText(): 
+}
+class ScoreText {
+  + ScoreText(): 
+}
+class StartButton {
+  + StartButton(SurvivalOutbreak, Coordinate2D): 
+  + onMouseExited(): void
+  + onMouseButtonPressed(MouseButton, Coordinate2D): void
+  + onMouseEntered(): void
+}
+class SurvivalOutbreak {
+  + SurvivalOutbreak(): 
+  + setupScenes(): void
+  + setupGame(): void
+  + main(String[]): void
+}
+class TitleScene {
+  + TitleScene(SurvivalOutbreak): 
+  + setupEntities(): void
+  + setupScene(): void
+}
+class Zombie {
+  + Zombie(Coordinate2D): 
+  # setupEntities(): void
+  + notifyBoundaryCrossing(SceneBorder): void
+}
+class ZombieSprite {
+  + ZombieSprite(Coordinate2D): 
+}
+class miniZombie {
+  + miniZombie(): 
+}
+class miniZombieSprite {
+  + miniZombieSprite(): 
+}
+
+@enduml
