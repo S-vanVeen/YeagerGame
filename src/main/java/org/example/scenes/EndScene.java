@@ -10,9 +10,11 @@ import javafx.scene.text.FontWeight;
 import org.example.buttons.PlayAgainButton;
 import org.example.buttons.QuitButton;
 import org.example.SurvivalOutbreak;
+import org.example.ui.Cash;
 
 public class EndScene extends StaticScene {
     private final SurvivalOutbreak survivalOutbreak;
+    private Cash score;
 
     public EndScene(SurvivalOutbreak survivalOutbreak) {
         this.survivalOutbreak = survivalOutbreak;
@@ -40,7 +42,7 @@ public class EndScene extends StaticScene {
 
         var EndSceneSubText = new TextEntity(
                 new Coordinate2D(getWidth() / 2, getHeight() / 4 + 75),
-                "Score: 23530"
+                "Score: "
         );
         EndSceneSubText.setAnchorPoint(AnchorPoint.CENTER_CENTER);
         EndSceneSubText.setFill(Color.WHITE);

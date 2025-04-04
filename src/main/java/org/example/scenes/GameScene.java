@@ -43,10 +43,6 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     private PurchaseOption ammoRefillOption;
     private int HEALTH_UPGRADE_AMOUNT = 25;
     private int AMMO_UPGRADE_AMOUNT = 24;
-    private final int MAX_ACTIVE_ZOMBIES = 50;
-    private int zombiesToSpawn = 0;
-    private boolean allZombiesSpawned = false;
-
 
     private final Coordinate2D[] spawnPoints = {
             new Coordinate2D(100, 100),
@@ -94,53 +90,27 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         player.setAmmunition(ammunition); // Connect player to ammunition system
         addEntity(player);
 
-        prepareZombiesForRound();
+        spawnZombies();
     }
 
-    private void prepareZombiesForRound() {
+    private void spawnZombies() {
         zombies.clear();
-        zombiesToSpawn = maxZombies;
-        allZombiesSpawned = false;
+        for (int i = 0; i < maxZombies; i++) {
+            Coordinate2D spawnPoint = (i < spawnPoints.length) ?
+                    spawnPoints[i] :
+                    new Coordinate2D(Math.random() * getWidth(), Math.random() * getHeight());
 
-        // Spawn initial zombies up to the maximum allowed
-        int initialSpawnCount = Math.min(zombiesToSpawn, MAX_ACTIVE_ZOMBIES);
-        for (int i = 0; i < initialSpawnCount; i++) {
-            spawnSingleZombie();
-            zombiesToSpawn--;
+            BaseZombie zombie;
+            if (random.nextDouble() < 0.2) { //kans voor bigzombie
+                zombie = new BigZombie(player, this);
+            } else {
+                zombie = new Zombie(player, this);
+            }
+
+            zombie.setAnchorLocation(spawnPoint);
+            zombies.add(zombie);
+            addEntity(zombie);
         }
-
-        // If we've spawned all zombies for this round
-        if (zombiesToSpawn <= 0) {
-            allZombiesSpawned = true;
-        }
-    }
-
-    private void spawnSingleZombie() {
-        if (zombies.size() >= MAX_ACTIVE_ZOMBIES) {
-            return; // Do not spawn if we're at max capacity
-        }
-
-        // Pick a spawn point
-        Coordinate2D spawnPoint;
-        int index = zombies.size() % spawnPoints.length;
-        spawnPoint = spawnPoints[index];
-
-        // With some randomization so they don't all spawn on the exact same point
-        double offsetX = random.nextDouble() * 100 - 50; // -50 to +50
-        double offsetY = random.nextDouble() * 100 - 50; // -50 to +50
-        spawnPoint = new Coordinate2D(spawnPoint.getX() + offsetX, spawnPoint.getY() + offsetY);
-
-        // Create zombie based on probability
-        BaseZombie zombie;
-        if (random.nextDouble() < 0.2) { // 20% chance for BigZombie
-            zombie = new BigZombie(player, this);
-        } else {
-            zombie = new Zombie(player, this);
-        }
-
-        zombie.setAnchorLocation(spawnPoint);
-        zombies.add(zombie);
-        addEntity(zombie);
     }
 
     @Override
@@ -148,7 +118,6 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         addTimer(new ZombieUpdater(10)); // Update zombies elke 10ms
         addTimer(new RoundManager(1000)); // Checkt status van ronde en voor de countdown
         addTimer(new ReloadTimer(RELOAD_TIME_MS));
-        addTimer(new ZombieSpawner(500)); // Check every half second if we can spawn more zombies
     }
 
     @Override
@@ -173,16 +142,6 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
 
     public void removeZombie(BaseZombie zombie) {
         zombies.remove(zombie);
-
-        // When a zombie is removed and there are more to spawn, spawn a new one
-        if (!allZombiesSpawned && zombiesToSpawn > 0 && zombies.size() < MAX_ACTIVE_ZOMBIES) {
-            spawnSingleZombie();
-            zombiesToSpawn--;
-
-            if (zombiesToSpawn <= 0) {
-                allZombiesSpawned = true;
-            }
-        }
     }
 
     public void addCash(int amount) {
@@ -197,7 +156,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
 
         @Override
         public void onAnimationUpdate(long timestamp) {
-            if (zombies.isEmpty() && allZombiesSpawned && !roundReadyToStart && !countdownActive) {
+            if (zombies.isEmpty() && !roundReadyToStart && !countdownActive) {
                 roundReadyToStart = true;
                 countdownActive = true;
                 countdownTimer.reset(ROUND_DELAY_SECONDS);
@@ -215,25 +174,6 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         }
     }
 
-    private class ZombieSpawner extends Timer {
-        public ZombieSpawner(long intervalInMs) {
-            super(intervalInMs);
-        }
-
-        @Override
-        public void onAnimationUpdate(long timestamp) {
-            // If there are zombies to spawn and we're below the maximum active zombies
-            if (!allZombiesSpawned && zombiesToSpawn > 0 && zombies.size() < MAX_ACTIVE_ZOMBIES) {
-                spawnSingleZombie();
-                zombiesToSpawn--;
-
-                if (zombiesToSpawn <= 0) {
-                    allZombiesSpawned = true;
-                }
-            }
-        }
-    }
-
     private class RoundManager extends Timer {
         public RoundManager(long intervalInMs) {
             super(intervalInMs);
@@ -242,7 +182,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         @Override
         public void onAnimationUpdate(long timestamp) {
             if (countdownActive) {
-                countdownTimer.tick(); // elke seconde
+                countdownTimer.tick(); //elke seconde
 
                 if (countdownTimer.getSecondsLeft() <= 0) {
                     hidePurchaseOptions();
@@ -283,7 +223,7 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
         roundText.verhoogRonde();
         roundText.setRoundText();
         maxZombies = (int) (maxZombies * 1.5);
-        prepareZombiesForRound();
+        spawnZombies();
         System.out.println("Round " + roundText.getRound() + " started with " + maxZombies + " zombies!");
     }
     private void showPurchaseOptions() {
@@ -344,4 +284,5 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
             System.out.println("Not enough cash! Need $" + cost);
         }
     }
+
 }

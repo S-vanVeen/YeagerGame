@@ -31,6 +31,7 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     private final int SPRITE_ROW_DOWN = 1;
     private final int SPRITE_ROW_LEFT = 2;
     private final int SPRITE_ROW_RIGHT = 3;
+    private final int MAX_HEALTH = 500;
 
     private int lastDirection = SPRITE_ROW_DOWN;
 
@@ -75,9 +76,12 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     }
 
     public void increaseMaxHealth(int amount) {
-        health += amount;
-        healthBar.updateHealth(health);
-        System.out.println("Player health increased to: " + health);
+        if(health < MAX_HEALTH) {
+            health += amount;
+            healthBar.updateHealth(health);
+            System.out.println("Player health increased to: " + health);
+        }
+
     }
 
     public boolean isReloading() {
