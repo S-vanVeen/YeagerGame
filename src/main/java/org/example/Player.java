@@ -12,7 +12,7 @@ import javafx.scene.input.KeyCode;
 import org.example.ui.HealthBar;
 import org.example.ui.RoundText;
 import org.example.weapons.Ammunition;
-import org.example.zombies.NormalZombie.HitBox;
+import org.example.zombies.BaseHitBox;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -178,7 +178,9 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
     @Override
     public void onCollision(List<Collider> colliders) {
         for (Collider collider : colliders) {
-            if (collider instanceof HitBox) {
+            if (collider instanceof BaseHitBox) {
+                BaseHitBox hitBox = (BaseHitBox) collider;
+
                 if (isReloading) {
                     isReloading = false;
                 }
@@ -190,7 +192,15 @@ public class Player extends DynamicSpriteEntity implements KeyListener, SceneBor
 
                 setAnchorLocation(newLocation);
 
-                health -= 10;
+                // Use the zombie's specific damage amount
+                int damage = hitBox.getDamageAmount();
+                health -= damage;
+
+                // Show damage in console for debugging
+                System.out.println("Player took " + damage + " damage from " +
+                        hitBox.getZombieType() +
+                        ". Remaining health: " + health);
+
                 healthBar.updateHealth(health);
 
                 if (health <= 0) {
