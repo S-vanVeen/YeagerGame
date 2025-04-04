@@ -65,6 +65,8 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
     @Override
     public void setupScene() {
         setBackgroundImage("images/startscreen_bg.jpg");
+        setBackgroundAudioVolume(0.15);
+        setBackgroundAudio("audio/zombieGeluid.m4a");
     }
 
     @Override
@@ -190,8 +192,13 @@ public class GameScene extends DynamicScene implements TimerContainer, MouseButt
             }
         }
     }
+    private void playZombieSound() {
+        var shootSound = new com.github.hanyaeger.api.media.SoundClip("audio/zombieDood.wav");
+        shootSound.play();
+    }
 
     public void removeZombie(BaseZombie zombie) {
+        playZombieSound();
         zombies.remove(zombie);
 
         // When a zombie is removed and there are more to spawn, spawn a new one
