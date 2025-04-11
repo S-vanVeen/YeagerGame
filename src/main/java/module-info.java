@@ -2,12 +2,12 @@ module OutbreakSurvival {
     requires hanyaeger;
     requires java.desktop;
 
-    exports org.example;
+    exports org.SurvivalOutbreak;
 
     opens images;
     opens audio;
     opens sprites;
-    exports org.example.zombies.normalZombie;
-    exports org.example.scenes;
-    exports org.example.buttons;
+    exports org.SurvivalOutbreak.zombies.NormalZombie;
+    exports org.SurvivalOutbreak.scenes;
+    exports org.SurvivalOutbreak.buttons;
 }
